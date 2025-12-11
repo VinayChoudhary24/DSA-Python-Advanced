@@ -1203,3 +1203,351 @@ print(postfix_to_prefix("523/5-*526/-*"))
 
 
 
+
+###Question
+Check Redundant Brackets
+
+For a given expression in the form of a string, find if there exist any redundant brackets or not. It is given that 
+the expression contains only rounded brackets or parenthesis and the input expression will always be balanced.
+
+A pair of the bracket is said to be redundant when a sub-expression is surrounded by unnecessary or needless brackets.
+
+Example:
+Expression: (a+b)+c
+Since there are no needless brackets, hence, the output must be 'false'.
+
+Expression: ((a+b))
+The expression can be reduced to (a+b). Hence the expression has redundant brackets and the output will be 'true'.
+Note:
+You will not get a partial score for this problem. You will get marks only if all the test cases are passed.
+Return "false" if no brackets are present in the input.
+
+Answer:
+
+def find(ch):
+    if ch == "+" or ch == "-" or ch == "*" or ch == "/" or ch == "%":
+        return True
+    return False
+
+def isEmpty(stack):
+     return len(stack) == 0
+
+def top(stack):
+    return stack[len(stack) - 1]
+
+"""
+    Check if there are redundant (unnecessary) brackets in the expression.
+    
+    Key Strategy:
+    - Push only opening brackets '(' and operators onto stack
+    - Ignore operands (like 'a', 'b', etc.) - don't push them
+    - When closing bracket ')' is found:
+      * Pop until we reach '('
+      * If we popped anything, brackets are valid (hasOperator = True)
+      * If we popped nothing, brackets are redundant (hasOperator = False)
+    
+    Why ignore operands?
+    - We only care if there's SOMETHING (operator or operand) between brackets
+    - Since we're popping until '(', if stack.pop() happens even once, 
+      it means there was something between the brackets
+    - The hasOperator flag tracks whether we popped anything, not just operators
+    
+    Time Complexity: O(n) where n is length of expression
+    Space Complexity: O(n) for the stack
+    """
+def checkRedundantBrackets(expression):
+    
+    # Stack to store opening brackets '(' and operators
+    stk = []
+    for i in range(len(expression)):
+        # Case 1: Opening bracket '(' OR Operator (+, -, *, /, %)
+        if (expression[i] == "(") or (find(expression[i])):
+            # Push opening brackets and operators onto stack
+            # We DON'T push operands (like 'a', 'b', '1', '2', etc.)
+            stk.append(expression[i])
+        # Case 2: Closing bracket ')'
+        elif expression[i] == ")":
+            # Flag to track if we found anything between '(' and ')'
+            # This will be True if we pop ANY element (operator OR nothing)
+            # Naming note: 'hasOperator' is slightly misleading - 
+            # it really means "has something between brackets"
+            hasOperator = False
+            # Pop all elements until we find the matching opening bracket '('
+            while not isEmpty(stk) and top(stk) != "(":
+                # Pop an element from stack
+                stk.pop()
+
+                # Since we popped something, there was content between brackets
+                # Set flag to True (brackets contain something, so NOT redundant)
+                hasOperator = True
+            # After the while loop:
+            # - If hasOperator = False: we didn't pop anything
+            #   This means ')' immediately followed '(' with nothing in between
+            #   Example: "()" or after removing operands: effectively "()"
+            #   These brackets are REDUNDANT
+            if not hasOperator:
+                # No operator/content found between '(' and ')'
+                # Brackets are redundant
+                return True
+            # If hasOperator = True: we popped at least one element
+            # This means there was an operator between '(' and ')'
+            # These brackets are VALID (not redundant)
+
+            # Now remove the matching opening bracket '(' from stack
+            if not isEmpty(stk):
+                # Remove the '('
+                stk.pop()
+    # If we've processed the entire expression without finding redundant brackets
+    return False
+
+checkRedundantBrackets("((a+b))")
+
+True
+
+
+
+###Question
+Minimum Bracket Reversal
+
+For a given expression in the form of a string, find the minimum number of brackets that can be reversed in order 
+to make the expression balanced. The expression will only contain curly brackets.
+
+If the expression can't be balanced, return -1.
+
+Example:
+Expression: {{{{
+If we reverse the second and the fourth opening brackets, the whole expression will get balanced. Since we have 
+to reverse two brackets to make the expression balanced, the expected output will be 2.
+
+Expression: {{{
+In this example, even if we reverse the last opening bracket, we would be left with the first opening bracket and 
+hence will not be able to make the expression balanced and the output will be -1.
+
+Answer:
+
+def isEmpty(stack):
+     return len(stack) == 0
+
+def top(stack):
+    return stack[len(stack) - 1]
+
+"""
+    Find the minimum number of bracket reversals needed to balance the expression.
+    
+    Algorithm:
+    1. Handle edge cases (empty string, odd length)
+    2. Remove all balanced pairs using stack (similar to bracket matching)
+    3. After removal, remaining brackets follow pattern: }}}...{{{ 
+       (closing brackets at bottom, opening brackets at top)
+    4. Process remaining brackets in pairs from stack:
+       - If pair is DIFFERENT (like '}{' or '{}'): need 2 reversals
+       - If pair is SAME (like '}}' or '{{'): need 1 reversal
+    
+    Why this works:
+    - '}' and '{' together (different): reverse both → 2 reversals
+    - '}}' together (same): reverse first '}' to get '{}' → 1 reversal
+    - '{{' together (same): reverse second '{' to get '{}' → 1 reversal
+    
+    Time Complexity: O(n)
+    Space Complexity: O(n)
+"""
+def countBracketReversals(inputString):
+    length = len(inputString)
+
+    # Edge case 1: Empty string is already balanced
+    if length == 0:
+        return 0
+
+    # Edge case 2: If length is odd, it's impossible to balance
+    # We need pairs of brackets, so even length is required
+    if length % 2 != 0:
+        return -1
+
+    # Stack to store unbalanced brackets
+    # Will be used to remove all balanced pairs first
+    stack = []
+
+    # Step 1: Remove all balanced pairs
+    # Iterate through each character in the input string
+    for i in range(length):
+        currentChar = inputString[i]
+        # Case 1: Opening bracket '{'
+        if currentChar == "{":
+            # Always push opening bracket to stack
+            stack.append(currentChar)
+        # Case 2: Closing bracket '}'
+        else:
+            # Check if we can form a balanced pair
+            # Condition: stack is not empty AND top element is opening bracket '{'
+            if (not isEmpty(stack)) and (top(stack) == "{"):
+                # We found a matching pair: '{' and '}'
+                # Remove the balanced pair by popping the opening bracket
+                stack.pop()
+            else:
+                # No matching opening bracket found
+                # This closing bracket is unbalanced, so push it to stack
+                stack.append(currentChar)
+                
+    # After the loop, stack contains only UNBALANCED brackets
+    # Pattern in stack (from bottom to top): }}}...{{{
+    # All closing brackets '}' are at the bottom
+    # All opening brackets '{' are at the top
+
+    # Step 2: Count minimum reversals needed
+    # Process remaining unbalanced brackets in pairs
+    count = 0
+    # Process brackets in pairs from top of stack
+    while not isEmpty(stack):
+        # Pop two brackets from stack
+        # char1 is popped first (was higher in stack)
+        # char2 is popped second (was lower in stack)
+        char1 = stack.pop()
+        char2 = stack.pop()
+
+        # Check if the pair is different or same
+        if char1 != char2:
+            # Case 1: Different brackets (e.g., '}' and '{' or '{' and '}')
+            # Pattern like "}{" or "{}"
+            # To balance "}{": need to reverse BOTH brackets
+            #   - Reverse '}' to '{' 
+            #   - Reverse '{' to '}'
+            # Result: Need 2 reversals
+            count += 2
+        else:
+            # Case 2: Same brackets (e.g., '}}' or '{{')
+            # Pattern like "}}" or "{{"
+            # To balance "}}": reverse first '}' to get "{}"
+            #   - Result: "{}" (balanced with 1 reversal)
+            # To balance "{{": reverse second '{' to get "{}"
+            #   - Result: "{}" (balanced with 1 reversal)
+            # Result: Need 1 reversal
+            count += 1
+
+    # Return the total number of reversals needed
+    return count
+
+countBracketReversals("{{}}{{")
+
+1
+
+
+
+###Question
+You are given an array 'ARR' of integers of length N. Your task is to find the next smaller element for each of 
+the array elements.
+
+Next Smaller Element for an array element is the first element to the right of that element which has a value 
+strictly smaller than that element.
+
+If for any array element the next smaller element does not exist, you should print -1 for that array element.
+
+For Example:
+If the given array is [ 2, 3, 1], we need to return [1, 1, -1]. Because for  2, 1 is the Next Smaller element. 
+For 3, 1 is the Next Smaller element and for 1, there is no next smaller element hence the answer for this element 
+is -1.
+
+Answer:
+
+def isStackEmpty(stack):
+     return len(stack) == 0
+
+def next_smaller(arr):
+    """
+    Find the next smaller element for each element in the array.
+    For each element, find the first element to its RIGHT that is smaller.
+    Uses a monotonic increasing stack.
+    """
+    n = len(arr)
+    output = [-1] * n
+    st = []  # Stack stores indices
+    st.append(0)
+    
+    for i in range(1, n):
+        # Pop elements greater than current element
+        while not isStackEmpty(st) and arr[i] < arr[st[len(st) - 1]]:
+            output[st[len(st) - 1]] = arr[i]
+            st.pop()
+        st.append(i)
+    
+    return output
+
+next_smaller([1, 3, 5, 8, 3, 4, 7, 10])
+
+[-1, -1, 3, 3, -1, -1, -1, -1]
+
+
+
+
+###Question
+Postfix to Infix
+
+You are given a mathematical expression in postfix notation. The expression consists of alphabets(both lowercase 
+and uppercase) and operators.
+
+Convert this expression to infix notation.
+
+Note:
+Surround every expression with a pair of parentheses “()”.
+
+Example:
+Input: ‘postfix’ = “ab+c+”
+Output: ‘infix’ = “((a+b)+c)”
+
+Explanation: The expression ((a+b)+c)” in infix is equivalent to “ab+c+” in postfix.
+
+Answer:
+
+def isOperator(char):
+    return char == "+" or char == "-" or char == "*" or char == "/" or char == "%"
+
+def postfix_to_infix(s):
+    """
+    Convert postfix expression to fully parenthesized infix expression.
+
+    Algorithm:
+    1. Scan from LEFT → RIGHT
+    2. If operand → push to stack
+    3. If operator:
+         - pop operand2
+         - pop operand1
+         - newExpr = "(" + operand1 + operator + operand2 + ")"
+         - push newExpr
+
+    Note:
+    - Surround EVERY expression with parentheses as required.
+    """
+
+    # Handle empty string edge case
+    if len(s) == 0:
+        return
+
+    # Stack to store operands and intermediate infix expressions
+    st = []
+    i = 0
+
+    # Scan the postfix expression from left to right
+    while i < len(s):
+        # CASE 1: Current character is an operator
+        if isOperator(s[i]):   # OPERATOR CASE
+            operand2 = st.pop() # Pop the right operand (top of stack)
+            operand1 = st.pop() # Pop the left operand (next element in stack)
+
+            # Create fully parenthesized infix expression
+            # Format: (left_operand operator right_operand)
+            expr = "(" + operand1 + s[i] + operand2 + ")"
+            st.append(expr) # Push the newly formed infix expression back onto the stack
+        # CASE 2: Current character is an operand (alphabet/number)
+        else:                  
+            # OPERAND CASE
+            # Push the operand directly onto the stack
+            st.append(s[i])    # push letter (alphabet)
+
+        # Move to the next character
+        i += 1
+
+    # The final element in the stack is the complete infix expression
+    return st.pop()
+
+print(postfix_to_infix("ABC*+D/"))
+
+((A+(B*C))/D)
