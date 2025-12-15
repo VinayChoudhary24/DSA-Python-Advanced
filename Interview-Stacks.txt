@@ -856,7 +856,7 @@ stock_span([100, 80, 70, 60, 30, 40, 60, 80, 110])
                        next greater building.
                     3. we can maintain two arrays:
                                        ==> TL(Left to Right), represents the previous buildings
-                                       ==> TR(Right to Left), represents the previous buildings 
+                                       ==> TR(Right to Left), represents the Next buildings 
                     
                     4. now we calculate:
                                  Summation of (Height of current Building - min(tl - tr)) * 1 

@@ -1,0 +1,317 @@
+###Question
+Next Number
+
+Given a large number represented in the form of a linked list. Write code to increment the number by 1 
+in-place(i.e. without using extra space).
+
+Note: You don't need to print the elements, just update the elements and return the head of updated LL.
+
+Answer:
+
+# Insert Node at the Head
+class ll_rev_rec_Node:
+    def __init__(self, value):
+        self.data = value
+        self.next = None
+
+# Create Empty Linked List
+class LinkedList_rev_rec:
+    def __init__(self):
+        self.head = None
+
+    # Create and Insert First Node
+    def insert_at_head(self, data):
+        # create node
+        new_node = ll_rev_rec_Node(data)
+
+        # connect the node with existing list
+        new_node.next = self.head
+
+        # update the head 
+        self.head = new_node
+
+    # reverse the LL
+    def reverse(self):
+        prev = None
+        curr = self.head
+
+        while curr != None:
+            remaining = curr.next # access to remaining list
+            curr.next = prev # reverse the next ref
+            prev = curr # prepare prev for next iteration
+            curr = remaining # prepare curr for next iteration
+
+        self.head = prev # Update the new head
+
+    def add_one_to_LL(self):
+        # reverse the LL
+        self.reverse()
+        # Add one
+        carry = 1
+        # keep tracking the tailNode, so we dont have to loop again if carry left
+        tailNode = self.head
+        temp = self.head
+        while temp != None:
+            nodesum = temp.data + carry
+            temp.data = nodesum % 10 # update data to ones place value i.e for 10, 0 is ones value
+            nodesum //= 10 # get the ten's place value i.e for 10, 1 is tens value
+            carry = nodesum
+            if temp.next != None:
+                tailNode = tailNode.next
+            temp = temp.next
+
+        # when carry is not 0 and we are left with a value we need to create a node and add it and make it tail
+        if carry != 0:
+            tailNode.next = ll_rev_rec_Node(carry)
+
+        # again reverse the LL
+        self.reverse()
+    
+     # func to display LL
+    def display_ll(self):
+        temp = self.head
+        while temp != None:
+            print(temp.data, end="-->")
+            temp = temp.next
+        print("X")
+
+ll2 = LinkedList_rev_rec()
+
+ll2.insert_at_head(9)
+ll2.insert_at_head(9)
+ll2.insert_at_head(9)
+
+ll2.display_ll()
+
+9-->9-->9-->X
+
+ll2.add_one_to_LL()
+ll2.display_ll()
+
+1-->0-->0-->0-->X
+
+
+
+
+###Question
+Deque
+
+You need to implement a class for Dequeue i.e. for double ended queue. In this queue, elements can be inserted 
+and deleted from both the ends.
+
+You don't need to double the capacity.
+
+You need to implement the following functions -
+
+1. constructor
+You need to create the appropriate constructor. Size for the queue passed is 10.
+
+2. insertFront -
+This function takes an element as input and insert the element at the front of queue. Insert the element only if queue is not full. And if queue is full, print -1 and return.
+
+3. insertRear -
+This function takes an element as input and insert the element at the end of queue. Insert the element only if queue is not full. And if queue is full, print -1 and return.
+
+4. deleteFront -
+This function removes an element from the front of queue. Print -1 if queue is empty.
+
+5. deleteRear -
+This function removes an element from the end of queue. Print -1 if queue is empty.
+
+6. getFront -
+Returns the element which is at front of the queue. Return -1 if queue is empty.
+
+7. getRear -
+Returns the element which is at end of the queue. Return -1 if queue is empty.
+
+Answer:
+
+class Deque:
+    def __init__(self):
+        self.size = 10
+        self.arr = [0] * self.size
+        self.front = -1
+        self.rear = -1
+
+    def isEmpty(self):
+        return self.front == -1
+
+    def isFull(self):
+        return (self.rear + 1) % self.size == self.front
+
+    def insertFront(self, value):
+        if self.isFull():
+            # print(-1)
+            return False
+
+        if self.isEmpty():
+            self.front = self.rear = 0
+        else:
+            self.front = (self.front - 1 + self.size) % self.size
+
+        self.arr[self.front] = value
+        return True
+
+    def insertRear(self, value):
+        if self.isFull():
+            # print(-1)
+            return False
+
+        if self.isEmpty():
+            self.front = self.rear = 0
+        else:
+            self.rear = (self.rear + 1) % self.size
+
+        self.arr[self.rear] = value
+        return True
+
+    
+    def deleteFront(self):
+        if self.isEmpty():
+            # print(-1)
+            return False
+
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.front = (self.front + 1) % self.size
+        return True
+
+        
+    def deleteRear(self):
+        if self.isEmpty():
+            # print(-1)
+            return False
+
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.rear = (self.rear - 1 + self.size) % self.size
+        return True
+        
+    def getFront(self):
+        if self.isEmpty():
+            return -1
+        
+        return self.arr[self.front]
+
+    def getRear(self):
+        if self.isEmpty():
+            return -1
+
+        return self.arr[self.rear]
+
+
+dq = Deque()
+
+dq.insertFront(10)
+dq.insertFront(20)
+dq.insertRear(30)
+dq.insertRear(40)
+
+dq.deleteFront()
+# dq.deleteFront()
+# dq.deleteFront()
+dq.deleteRear()
+
+print(dq.getFront())
+print(dq.getRear())
+
+10
+30      
+
+
+
+
+###Question
+Given a Singly Linked List of integers, delete all the alternate nodes in the list.
+
+Answer:
+
+# Insert Node at the Head
+class ll_rev_rec_Node:
+    def __init__(self, value):
+        self.data = value
+        self.next = None
+
+# Create Empty Linked List
+class LinkedList_rev_rec:
+    def __init__(self):
+        self.head = None
+
+    # Create and Insert First Node
+    def insert_at_head(self, data):
+        # create node
+        new_node = ll_rev_rec_Node(data)
+
+        # connect the node with existing list
+        new_node.next = self.head
+
+        # update the head 
+        self.head = new_node
+    
+    # insert at tail
+    def insert_at_tail(self, value):
+        # check if LL in Empty
+        if self.head == None:
+            self.insert_at_head(value)
+            return
+
+        # if LL is not empty
+        temp = self.head
+        while temp.next != None:
+            temp = temp.next
+
+        # when the loop ends temp points towards Tail
+        # Create a New Node
+        new_tail_node = ll_rev_rec_Node(value)
+
+        # add the new node memory Address to th current Tail
+        temp.next = new_tail_node
+
+    def deleteAlternateNodes(self):
+        if self.head == None:
+            return self.head
+
+        curr = self.head
+
+        while curr != None and curr.next != None:
+            # node to be deleted
+            node_to_delete = curr.next
+
+            # skip the node
+            curr.next = node_to_delete.next
+
+            # break the connection of deleted node
+            node_to_delete.next = None
+
+            # move curr to next kept node
+            curr = curr.next
+
+     # func to display LL
+    def display_ll(self):
+        temp = self.head
+        while temp != None:
+            print(temp.data, end="-->")
+            temp = temp.next
+        print("X")
+
+ll2 = LinkedList_rev_rec()
+
+ll2.insert_at_tail(10)
+ll2.insert_at_tail(25)
+ll2.insert_at_tail(27)
+ll2.insert_at_tail(38)
+ll2.insert_at_tail(45)
+ll2.insert_at_tail(63)
+
+ll2.display_ll()
+# 10-->25-->27-->38-->45-->63-->X
+
+ll2.deleteAlternateNodes()
+
+ll2.display_ll()
+
+10-->25-->27-->38-->45-->63-->X
+10-->27-->45-->X
+

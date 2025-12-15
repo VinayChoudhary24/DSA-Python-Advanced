@@ -1,0 +1,564 @@
+##TREES: Data is stored in a Tree-Structure. 
+             1. Tree Structure provides very Efficient algorithms.
+
+             2. The Tree-Structure is Like Redux Tree Structure i.e Parent-Child Relation.
+
+             3. There is ROOT Node and it has Childrens and those children also have Childrens and so on...
+
+             4. The Tree Structure is Recursive in Naature.
+
+             5. Trees Will never have a Cycle like Linked Lists.
+
+##TERMINOLOGY OF TREES:- 
+                     1. Root Node, the main parent of tree.
+                     2. children node, one data point in the tree.
+                     3. Siblings, 2 children from same parent.
+                     4. leaf, nodes which has no children.  
+
+
+##1:: BINARY TREES:- each node can only have either 0 or 1 or 2 nodes.
+
+
+
+## Example to create binary tree node::
+                            1. Each node needs to store some data.
+                            2. each node needs to store children nodes(Left and Right) memory addresses.
+                            3. In binary children nodes are called Left and Right Nodes.
+                            4. For leaf node left and right nodes are NONE. 
+
+
+class BinaryTreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+# create Binary node
+btn1 = BinaryTreeNode(6)
+btn2 = BinaryTreeNode(10)
+btn3 = BinaryTreeNode(14)
+
+btn4 = BinaryTreeNode(16)
+btn5 = BinaryTreeNode(20)
+btn6 = BinaryTreeNode(24)
+
+# Build the Connection beetween nodes i.e Parent-Child
+btn1.left = btn2
+btn1.right = btn3
+
+btn2.left = btn4
+btn2.right = btn5
+
+btn3.left = btn6
+
+# Function to Print Tree
+def displayTree(rootNode):
+    # Base Case: If root is None we return
+    if rootNode == None:
+        return
+    # print root data
+    print(rootNode.data, end="::")
+    # check if root left is not Node
+    if rootNode.left != None:
+        print("L-->", rootNode.left.data, end=", ")
+    else:
+        print("L-->", "None", end=", ")
+
+    # check if root right is not None
+    if rootNode.right != None:
+        print("R-->", rootNode.right.data, end="")
+    else:
+        print("R-->", "None", end="")
+        
+    # print empty to add new line for next Nodes
+    print()
+
+    # Recursive call for Children Nodes
+    displayTree(rootNode.left)
+    displayTree(rootNode.right)
+
+displayTree(btn1)
+
+6::L--> 10, R--> 14
+10::L--> 16, R--> 20
+16::L--> None, R--> None
+20::L--> None, R--> None
+14::L--> 24, R--> None
+24::L--> None, R--> None
+
+
+
+
+## Example to Take Input of Binary Tree from User
+                  
+# Take Input from User
+def inputTree():
+    rootNode = int(input())
+
+    # if user enter -1 it is treated as None
+    if rootNode == -1:
+        return None
+
+    # create node
+    root = BinaryTreeNode(rootNode)
+
+    # recursive call for children nodes
+    leftTree = inputTree()
+    rightTree = inputTree()
+    root.left = leftTree
+    root.right = rightTree
+    return root
+
+inputTreeData = inputTree()
+displayTree(inputTreeData)
+
+ 1
+ 2
+ -1
+ -1
+ 3
+ 4
+ -1
+ -1
+ -1
+1::L--> 2, R--> 3
+2::L--> None, R--> None
+3::L--> 4, R--> None
+4::L--> None, R--> None
+
+
+
+
+## Number of Nodes in Binary Tree
+
+def numNodes(rootNode):
+    # base case
+    if rootNode == None:
+        return 0
+
+    leftCount = numNodes(rootNode.left)
+    rightCount = numNodes(rootNode.right)
+    return 1 + leftCount + rightCount
+
+inputTreeData = inputTree()
+displayTree(inputTreeData)
+num_of_nodes = numNodes(inputTreeData)
+print("Number of nodes:", num_of_nodes)
+
+ 1
+ 2
+ -1
+ -1
+ 3
+ 4
+ 5
+ -1
+ -1
+ 6
+ -1
+ -1
+ 7
+ 8
+ -1
+ -1
+ -1
+1::L--> 2, R--> 3
+2::L--> None, R--> None
+3::L--> 4, R--> 7
+4::L--> 5, R--> 6
+5::L--> None, R--> None
+6::L--> None, R--> None
+7::L--> 8, R--> None
+8::L--> None, R--> None
+Number of nodes 8
+
+
+
+
+###Question
+Sum of Nodes
+
+For a given Binary Tree of integers, find and return the sum of all the nodes data.
+
+Answer:
+
+def getSum(root):
+	# base case
+    if root == None:
+        return 0
+
+    leftNode = getSum(root.left)
+    rightNode = getSum(root.right)
+
+    reult_sum = root.data + leftNode + rightNode
+    return reult_sum
+
+res_sum = getSum(btn1)
+print("Sum of nodes:", res_sum)
+
+90
+
+
+
+## TREE TRAVERSALS::
+            ==> Pre-order Approach, because root is taking care of itself before it takes care of it's childrens
+              1. First we Work on the Root.
+              2. then we complete Left Side. 
+              3. then we finish the right side.
+
+            ==> Post-order Approach, because root is taking care of it's childrens before itself.
+              1. First we complete Left Side. 
+              2. then we finish the right side.
+              3. Last we Work on the Root.
+
+            ==> In-order Approach, because we move in order i.e Fisrt left then root and lastly right
+              1. First we complete Left Side. 
+              2. then we work on root.  
+              3. Last we finish the right side.
+
+            ==> Level-order Approach, because we move in level i.e from top root to it's children and then there childrens
+                                      and so on...
+              1. First we work on root level. 
+              2. then we work on root childrens Level.  
+              3. then we finish root childrens --> childrens level, and so on...
+
+
+
+###Qoestion
+Write a Display function for Post-order
+
+Answer:
+
+def displayTreePostOrder(rootNode):
+    # Base Case
+    if rootNode is None:
+        return
+
+    # Recursive calls
+    displayTreePostOrder(rootNode.left)
+    displayTreePostOrder(rootNode.right)
+
+    # Left child
+    if rootNode.left is not None:
+        print("L-->", rootNode.left.data, end=", ")
+    else:
+        print("L-->", "None", end=", ")
+
+    # Right child
+    if rootNode.right is not None:
+        print("R-->", rootNode.right.data, end=", ")
+    else:
+        print("R-->", "None", end=", ")
+
+    # Root
+    print(rootNode.data)
+        
+displayTreePostOrder(btn1)
+
+L--> None, R--> None, 16
+L--> None, R--> None, 20
+L--> 16, R--> 20, 10
+L--> None, R--> None, 24
+L--> 24, R--> None, 14
+L--> 10, R--> 14, 6
+
+
+
+###Question
+Write a display function for In-Order 
+
+Answer:
+
+def displayTreeInOrder(rootNode):
+    # Base Case
+    if rootNode is None:
+        return
+
+    # In-order: Left → Root → Right
+    displayTreeInOrder(rootNode.left)
+
+    # Left child
+    if rootNode.left is not None:
+        print("L-->", rootNode.left.data, end=", ")
+    else:
+        print("L-->", "None", end=", ")
+
+    # Root
+    print(rootNode.data, end=", ")
+
+    # Right child
+    if rootNode.right is not None:
+        print("R-->", rootNode.right.data)
+    else:
+        print("R-->", "None")
+
+    displayTreeInOrder(rootNode.right)
+        
+displayTreeInOrder(btn1)
+
+L--> None, 16, R--> None
+L--> 16, 10, R--> 20
+L--> None, 20, R--> None
+L--> 10, 6, R--> 14
+L--> None, 24, R--> None
+L--> 24, 14, R--> None
+
+
+
+
+## NODE WITH LARGEST DATA::
+
+def largestData(rootNode):
+    # base case
+    if rootNode == None:
+        return -1 # Ideally we should return -inf
+
+    # Assumption
+    leftLargest = largestData(rootNode.left)
+    rightLargest = largestData(rootNode.right)
+
+    # Self Work i.e compare left and right with the root node
+    largestNum = max(rootNode.data, leftLargest, rightLargest)
+    return largestNum
+
+lar_num = largestData(btn1)
+print("Largest Number:", lar_num)
+
+Largest Number: 24
+
+
+
+
+###Question
+Nodes Greater than x
+
+For a given a binary tree of integers and an integer X, find and return the total number of nodes of the 
+given binary tree which are having data greater than X.
+
+Answer:
+
+def countNodesGreaterThanX(root, x) :
+	# base case
+    if root == None:
+        return 0
+
+     # self work
+    count = 0
+    if root.data > x:
+        count += 1
+
+    # Assumption
+    count += countNodesGreaterThanX(root.left, x)
+    count += countNodesGreaterThanX(root.right, x)
+
+    return count
+
+total_nodes = countNodesGreaterThanX(btn1, 15)
+print("Total Nodes:", total_nodes)
+
+Total Nodes: 3
+
+
+
+## Height of Tree::
+            1. if root node is None, the height is 0
+            2. if root has one node, height is 1
+
+            3. if root childrens have different height we find the one with more height and just add the root height.
+
+
+
+###Question
+The maximum and minimum number of nodes in a binary tree of height 5 are :
+
+Answer:
+
+63 and 6, Respectively
+
+
+
+###Question
+Height of Tree
+
+For a given Binary Tree of integers, find and return the height of the tree. Height is defined as the total number 
+of nodes along the longest path from the root to any of the leaf node. 
+
+Answer:
+def heightOfTree(root):
+    # Base Case
+    if root == None:
+        return 0
+
+    # Assumption
+    leftheight = heightOfTree(root.left)
+    rightHeight = heightOfTree(root.right)
+
+    # self work
+    return 1 + max(leftheight, rightHeight)
+
+max_height = heightOfTree(btn1)
+print("Max height is:", max_height)
+
+Max height is: 3
+
+
+
+ 
+            
+###Question
+Number of Leaf Nodes
+
+Answer:
+def numberofleafNodes(rootNode):
+    # Base Case
+    if rootNode == None:
+        return 0
+
+    # Self work
+    # if left and right are None it is Leaf Node
+    if rootNode.left == None and rootNode.right == None:
+        return 1
+
+    # Assumption
+    leftLeafNodes = numberofleafNodes(rootNode.left)
+    rightLeafNodes = numberofleafNodes(rootNode.right)
+
+    return leftLeafNodes + rightLeafNodes
+
+number_of_leafs = numberofleafNodes(btn1)
+print("Number of leaf nodes are:", number_of_leafs)
+
+Number of leaf nodes are: 3
+
+
+
+###Question
+Print Nodes at Depth K
+
+Answer First Approach(Decrease K):
+
+def printDepthK(rootNode, k):
+    if rootNode == None:
+        return
+    # if k == 0, we are at the required Depth/level
+    if k == 0:
+        print("Nodes ar depth k are:", rootNode.data)
+        return
+
+    # Assumption
+    printDepthK(rootNode.left, k - 1)
+    printDepthK(rootNode.right, k - 1)
+
+printDepthK(btn1, 2)
+
+Nodes ar depth k are: 16
+Nodes ar depth k are: 20
+Nodes ar depth k are: 24
+
+
+Answer Second Approach(Increase Depth):
+
+def printDepthK2(rootNode, k, d=0):
+    if rootNode == None:
+        return
+
+    # we can use the depth and increase it until it's at required level 
+    if k == d:
+        print("Nodes ar depth k are:", rootNode.data)
+        return
+
+    # Assumption
+    printDepthK2(rootNode.left, k, d + 1)
+    printDepthK2(rootNode.right, k, d + 1)
+
+printDepthK2(btn1, 2)
+
+Nodes ar depth k are: 16
+Nodes ar depth k are: 20
+Nodes ar depth k are: 24
+
+
+
+
+###Question
+Replace Node with Depth
+
+For a given a Binary Tree of integers, replace each of its data with the depth of the tree.
+
+Root is at depth 0, hence the root data is updated with 0. Replicate the same further going down the in the depth 
+of the given tree.
+
+The modified tree will be printed in the in-order fashion.
+
+Answer:
+
+def changeToDepthTree(root, d=0) :
+    if root == None:
+        return
+    
+    root.data = d
+    changeToDepthTree(root.left, d + 1)
+    changeToDepthTree(root.right, d + 1)
+
+changeToDepthTree(btn1)
+displayTree(btn1)
+
+0::L--> 1, R--> 1
+1::L--> 2, R--> 2
+2::L--> None, R--> None
+2::L--> None, R--> None
+1::L--> 2, R--> None
+2::L--> None, R--> None
+
+
+
+
+###Question
+Is Node present
+
+For a given Binary Tree of type integer and a number X, find whether a node exists in the tree with data X or not.
+
+Answer:
+
+def isNodePresent(root, x):
+    if root == None:
+        return False
+
+    if root.data == x:
+        return True
+
+    return isNodePresent(root.left, x) or isNodePresent(root.right, x)
+
+isNodePresent = isNodePresent(btn1, 24)
+print("Is node present in tree:", isNodePresent)
+
+Is node present in tree: True
+
+
+
+###Question
+Nodes without sibling
+
+For a given Binary Tree of type integer, print all the nodes without any siblings.
+
+Answer:
+
+def printNodesWithoutSibling(root) :
+    if root == None:
+        return 
+
+    if root.left == None and root.right != None:
+        print("Right single node:", root.right.data, end=" ")
+        print()
+    elif root.right == None and root.left != None:
+        print("Left single node:", root.left.data, end=" ")
+        print()
+
+    printNodesWithoutSibling(root.left)
+    printNodesWithoutSibling(root.right)
+
+printNodesWithoutSibling(btn1)
+
+Left single node: 24
+
+

@@ -1449,4 +1449,132 @@ d.popleft() # 50
 # Remove from Back
 d.pop() # 30
 
-                    							
+
+
+
+###Question
+Deque
+
+You need to implement a class for Dequeue i.e. for double ended queue. In this queue, elements can be inserted 
+and deleted from both the ends.
+
+You don't need to double the capacity.
+
+You need to implement the following functions -
+
+1. constructor
+You need to create the appropriate constructor. Size for the queue passed is 10.
+
+2. insertFront -
+This function takes an element as input and insert the element at the front of queue. Insert the element only if queue is not full. And if queue is full, print -1 and return.
+
+3. insertRear -
+This function takes an element as input and insert the element at the end of queue. Insert the element only if queue is not full. And if queue is full, print -1 and return.
+
+4. deleteFront -
+This function removes an element from the front of queue. Print -1 if queue is empty.
+
+5. deleteRear -
+This function removes an element from the end of queue. Print -1 if queue is empty.
+
+6. getFront -
+Returns the element which is at front of the queue. Return -1 if queue is empty.
+
+7. getRear -
+Returns the element which is at end of the queue. Return -1 if queue is empty.
+
+Answer:
+
+class Deque:
+    def __init__(self):
+        self.size = 10
+        self.arr = [0] * self.size
+        self.front = -1
+        self.rear = -1
+
+    def isEmpty(self):
+        return self.front == -1
+
+    def isFull(self):
+        return (self.rear + 1) % self.size == self.front
+
+    def insertFront(self, value):
+        if self.isFull():
+            # print(-1)
+            return False
+
+        if self.isEmpty():
+            self.front = self.rear = 0
+        else:
+            self.front = (self.front - 1 + self.size) % self.size
+
+        self.arr[self.front] = value
+        return True
+
+    def insertRear(self, value):
+        if self.isFull():
+            # print(-1)
+            return False
+
+        if self.isEmpty():
+            self.front = self.rear = 0
+        else:
+            self.rear = (self.rear + 1) % self.size
+
+        self.arr[self.rear] = value
+        return True
+
+    
+    def deleteFront(self):
+        if self.isEmpty():
+            # print(-1)
+            return False
+
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.front = (self.front + 1) % self.size
+        return True
+
+        
+    def deleteRear(self):
+        if self.isEmpty():
+            # print(-1)
+            return False
+
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.rear = (self.rear - 1 + self.size) % self.size
+        return True
+        
+    def getFront(self):
+        if self.isEmpty():
+            return -1
+        
+        return self.arr[self.front]
+
+    def getRear(self):
+        if self.isEmpty():
+            return -1
+
+        return self.arr[self.rear]
+
+
+dq = Deque()
+
+dq.insertFront(10)
+dq.insertFront(20)
+dq.insertRear(30)
+dq.insertRear(40)
+
+dq.deleteFront()
+# dq.deleteFront()
+# dq.deleteFront()
+dq.deleteRear()
+
+print(dq.getFront())
+print(dq.getRear())
+
+10
+30                    							
