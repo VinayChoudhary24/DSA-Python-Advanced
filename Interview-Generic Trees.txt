@@ -1,0 +1,590 @@
+## Generic Trees:: There is No limits on Children Nodes like Binary, they can have as many as childrens they want.
+
+           1. In Generic trees a Node will have some data and a array/list of Childrens. there is no left and right.
+
+
+
+## Example to Create a Generic Tree Node
+## BASE CODE
+
+class GenericTreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.children = list()
+
+#  root Node
+rootNode = GenericTreeNode(10)
+
+# Children's
+c1 = GenericTreeNode(5)
+c2 = GenericTreeNode(8)a
+c3 = GenericTreeNode(1)
+c4 = GenericTreeNode(15)
+c5 = GenericTreeNode(19)
+c6 = GenericTreeNode(22)
+
+# Append
+rootNode.children.append(c1)
+rootNode.children.append(c2)
+rootNode.children.append(c3)
+rootNode.children.append(c4)
+
+c3.children.append(c5)
+c3.children.append(c6)
+
+
+
+
+## Print the Generic Tree (RECURSIVELY)
+
+Solution One (Better Display):
+
+def printTreeDetail(root):
+    if root == None:
+        return
+
+    print(root.data, end=": ")
+    # Loop to print Children's
+    for child in root.children:
+        print(child.data, end=", ")
+
+    print()
+
+    # loop to call children recursively
+    for child in root.children:
+        printTreeDetail(child)
+
+printTreeDetail(rootNode)
+
+10: 5, 8, 1, 15, 
+5: 
+8: 
+1: 19, 22, 
+19: 
+22: 
+15: 
+
+
+
+Soution Two:
+
+def printTree(root):
+    if root == None:
+        return
+
+    print(root.data)
+    for child in root.children:
+        printTree(child)
+
+printTree(rootNode)
+
+10
+5
+8
+1
+19
+22
+15
+
+
+
+## Take Tree Input (RECURSIVELY)
+
+def takeTreeInput():
+    print("Please enter the root node")
+    rootData = int(input())
+
+    # edge case
+    if rootData == -1:
+        return None
+
+    # create node
+    root = GenericTreeNode(rootData)
+    # take children count
+    print("Please enter number of children for", rootData)
+    childCount = int(input())
+
+    # loop and take children data recursively
+    for i in range(childCount):
+        child = takeTreeInput()
+        # append children
+        root.children.append(child)
+
+    return root
+
+genericTreeRoot = takeTreeInput()
+printTreeDetail(genericTreeRoot)
+
+Please enter the root node
+ 10
+Please enter number of children for 10
+ 4
+Please enter the root node
+ 2
+Please enter number of children for 2
+ 0
+Please enter the root node
+ 5
+Please enter number of children for 5
+ 0
+Please enter the root node
+ 8
+Please enter number of children for 8
+ 2
+Please enter the root node
+ 15
+Please enter number of children for 15
+ 0
+Please enter the root node
+ 1
+Please enter number of children for 1
+ 0
+Please enter the root node
+ 22
+Please enter number of children for 22
+ 0
+10: 2, 5, 8, 22, 
+2: 
+5: 
+8: 15, 1, 
+15: 
+1: 
+22: 
+
+
+
+## Number of Nodes in Generic tree::
+
+###Question
+Given a generic tree, find and return the sum of all nodes present in the given tree.
+
+Answer:
+
+def sumOfAllNodes(root):
+    if root == None:
+        return 0
+
+    res = root.data
+    for child in root.children:
+        res = res + sumOfAllNodes(child)
+
+    return res
+
+print(sumOfAllNodes(rootNode))
+
+80
+
+
+
+###Question
+Node with Largest data
+
+Given a generic tree, find and return the node with maximum data.
+
+Answer:
+
+def maxDataNode(tree):
+    if tree == None:
+        return None
+
+    max_node = tree
+
+    for child in tree.children:
+        child_max = maxDataNode(child)
+        if child_max.data > max_node.data:
+            max_node = child_max
+
+    return max_node
+
+print(maxDataNode(rootNode).data)
+
+22
+
+
+
+###Question
+Height of generic tree
+
+Given a generic tree, find and return the height of given tree. The height of a tree is defined as the longest 
+distance from root node to any of the leaf node. Assume the height of a tree with a single node is 1.
+
+Answer:
+
+def heightOftree(root):
+    if root == None:
+        return 0
+
+    height = 0
+    for child in root.children:
+        child_height = heightOftree(child)
+        height = max(height, child_height)
+
+    return height + 1
+
+print(heightOftree(rootNode))
+
+3
+
+
+
+## Tree Input Levelwise::
+
+import queue
+
+def takeInputLevelwise():
+    q = queue.Queue()
+    print("Enter root")
+    rootData = int(input())
+    if rootData == -1 or rootData == 0:
+        return None
+
+    rootNode = GenericTreeNode(rootData)
+    q.put(rootNode)
+
+    while not q.empty():
+        current_node = q.get()
+        print("Enter number of children for", current_node.data)
+        num_child = int(input())
+
+        for i in range(num_child):
+            print("Enter the child data for", current_node.data)
+            childData = int(input())
+            childNode = GenericTreeNode(childData)
+
+            current_node.children.append(childNode)
+            q.put(childNode)
+
+    return rootNode
+
+levelwise_tree = takeInputLevelwise()
+printTreeDetail(levelwise_tree)
+
+Enter root
+ 1
+Enter number of children for 1
+ 3
+Enter the child data for 1
+ 2
+Enter the child data for 1
+ 3
+Enter the child data for 1
+ 4
+Enter number of children for 2
+ 0
+Enter number of children for 3
+ 2
+Enter the child data for 3
+ 5
+Enter the child data for 3
+ 6
+Enter number of children for 4
+ 0
+Enter number of children for 5
+ 3
+Enter the child data for 5
+ 7
+Enter the child data for 5
+ 8
+Enter the child data for 5
+ 9
+Enter number of children for 6
+ 0
+Enter number of children for 7
+ 0
+Enter number of children for 8
+ 0
+Enter number of children for 9
+ 0
+1: 2, 3, 4, 
+2: 
+3: 5, 6, 
+5: 7, 8, 9, 
+7: 
+8: 
+9: 
+6: 
+4: 
+
+
+
+###Question
+Print Tree Level Wise
+
+Given a generic tree, print the input tree in level wise order.
+
+For printing a node with data N, you need to follow the exact format -
+
+N:x1,x2,x3,...,xn
+where, N is data of any node present in the generic tree. x1, x2, x3, ...., xn are the children of node N. Note 
+that there is no space in between.
+You need to print all nodes in the level order form in different lines.
+
+Answer:
+
+import queue
+
+def printTreeLevelWise(root):
+    if root is None:
+        return
+
+    q = queue.Queue()
+    q.put(root)
+
+    while not q.empty():
+        current_node = q.get()
+
+        # Print current node data
+        print(current_node.data, end=":")
+
+        # Print children
+        for i in range(len(current_node.children)):
+            child = current_node.children[i]
+            print(child.data, end="")
+            if i != len(current_node.children) - 1:
+                print(",", end="")
+            q.put(child)
+
+        print()  # new line for next node
+
+printTreeLevelWise(rootNode)
+
+10:5,8,1,15
+5:
+8:
+1:19,22
+15:
+19:
+22:
+
+
+
+###Question
+Contains x
+
+Given a generic tree and an integer x, check if x is present in the given tree or not. Return true if x is present, 
+return false otherwise.
+
+Answer:
+
+def containsX(tree, x):
+    if tree == None:
+        return False
+
+    if tree.data == x:
+        return True
+
+    for child in tree.children:
+        isPresentChild = containsX(child, x)
+        if isPresentChild:
+            return True
+
+    return False
+
+print(containsX(rootNode, 19))
+
+True
+
+
+
+###Question
+Count leaf nodes
+
+Given a generic tree, count and return the number of leaf nodes present in the given tree.
+
+Answer:
+
+def leafNodeCount(tree):
+    if tree == None:
+        return 0
+
+    leaf_node = 0
+    if len(tree.children) == 0:
+        return 1
+    
+    for child in tree.children:
+        child_lead_node = leafNodeCount(child)
+        leaf_node = leaf_node + child_lead_node
+
+    return leaf_node
+
+print(leafNodeCount(rootNode))
+
+5
+
+
+
+
+###Question
+Node with maximum child sum
+
+Given a generic tree, find and return the node for which sum of its data and data of all its child nodes is maximum. 
+In the sum, data of the node and data of its immediate child nodes has to be taken.
+
+Answer:
+
+def maxSumNode(root):
+    if root is None:
+        return None, float('-inf')
+
+    # Sum of current node + its immediate children
+    current_sum = root.data
+    for child in root.children:
+        current_sum += child.data
+
+    max_node = root
+    max_sum = current_sum
+
+    # Check for all children subtrees
+    for child in root.children:
+        child_node, child_sum = maxSumNode(child)
+        if child_sum > max_sum:
+            max_sum = child_sum
+            max_node = child_node
+
+    return max_node, max_sum
+
+node, total = maxSumNode(rootNode)
+print(node.data)
+
+1
+
+
+
+###Question
+Structurally identical
+
+Given two generic trees, return true if they are structurally identical. Otherwise return false.
+
+Structural Identical
+If the two given trees are made of nodes with the same values and the nodes are arranged in the same way, then the 
+trees are called identical. 
+
+Answer Using Zip Func:
+
+def isIdentical(tree1, tree2):
+    # Case 1: both are None
+    if tree1 is None and tree2 is None:
+        return True
+
+    # Case 2: one is None, other is not
+    if tree1 is None or tree2 is None:
+        return False
+
+    # Case 3: data mismatch
+    if tree1.data != tree2.data:
+        return False
+
+    # Case 4: number of children mismatch
+    if len(tree1.children) != len(tree2.children):
+        return False
+
+    # Case 5: check each corresponding child
+    for c1, c2 in zip(tree1.children, tree2.children):
+        if not isIdentical(c1, c2):
+            return False
+
+    return True
+
+
+Answer Using Loop:
+
+def isIdentical(tree1, tree2):
+    if tree1 is None and tree2 is None:
+        return True
+
+    if tree1 is None or tree2 is None:
+        return False
+
+    if tree1.data != tree2.data:
+        return False
+
+    if len(tree1.children) != len(tree2.children):
+        return False
+
+    for i in range(len(tree1.children)):
+        if not isIdentical(tree1.children[i], tree2.children[i]):
+            return False
+
+    return True
+
+
+
+
+
+###Question
+Next Larger
+
+Given a generic tree and an integer n. Find and return the node with next larger element in the tree i.e. find a node 
+with value just greater than n.
+
+Note:
+Return NULL if no node is present with the value greater than n.
+
+Answer:
+
+def nextLargerElement(root, n):
+    # Base case: if current node is None, no larger element here
+    if root is None:
+        return None
+
+    # Initialize candidate for the next larger element
+    next_larger = None
+
+    # Check if current node's data is greater than n
+    # If yes, it's a potential candidate for "next larger"
+    if root.data > n:
+        next_larger = root
+
+    # Recursively search through all children of the current node
+    for child in root.children:
+         # Get the next larger element from this child's subtree
+        child_ans = nextLargerElement(child, n)
+
+        # If child's subtree has a valid answer
+        if child_ans is not None:
+            # Update next_larger if:
+            # 1. We don't have a candidate yet (next_larger is None), OR
+            # 2. The child's answer is smaller than our current candidate
+            # (we want the SMALLEST value that's still larger than n)
+            if next_larger is None or child_ans.data < next_larger.data:
+                next_larger = child_ans
+
+     # Return the best candidate found
+    # This will be the smallest value greater than n in this subtree
+    return next_larger
+
+print(nextLargerElement(rootNode, 19).data)
+
+22
+
+
+
+###Question
+Replace with Depth
+
+You are given a generic tree. You have to replace each node with its depth value. You just have to update the 
+data of each node, there is no need to return or print anything.
+
+Answer:
+
+def replacewithDepth(tree, depth=0):
+    if tree is None:
+        return
+
+    # Replace node data with its depth
+    tree.data = depth
+
+    for child in tree.children:
+        replacewithDepth(child, depth + 1)
+
+replacewithDepth(rootNode)
+printTreeLevelWise(rootNode)
+
+0:1,1,1,1
+1:
+1:
+1:2,2
+1:
+2:
+2:
+
