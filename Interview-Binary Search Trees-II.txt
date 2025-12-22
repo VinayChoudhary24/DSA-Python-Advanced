@@ -1,0 +1,498 @@
+## IMP:: AVL Trees and Red-Black Trees are few balanced BST. 
+         ==> AVL Trees are the Most Important in BST.
+
+## BASE CODE::
+
+class BinaryTreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+btn1 = BinaryTreeNode(10)
+btn2 = BinaryTreeNode(7)
+
+btn3 = BinaryTreeNode(14)
+btn4 = BinaryTreeNode(4)
+
+btn5 = BinaryTreeNode(9)
+btn6 = BinaryTreeNode(16)
+
+btn8 = BinaryTreeNode(11)
+
+btn1.left = btn2
+btn1.right = btn3
+
+btn2.left = btn4
+btn2.right = btn5
+
+btn3.left = btn8
+btn3.right = btn6
+
+
+def dispayTree(rootNode):
+    if rootNode == None:
+        return
+
+    print(rootNode.data, end=":: ")
+
+    if rootNode.left != None:
+        print("L-->", rootNode.left.data, end=", ")
+    else:
+        print("L-->", "None", end=", ")
+
+    if rootNode.right != None:
+        print("R-->", rootNode.right.data, end="")
+    else:
+        print("R-->", "None", end="")
+
+    print()
+
+    # recursive call for Childrens
+    dispayTree(rootNode.left)
+    dispayTree(rootNode.right)
+
+dispayTree(btn1)
+
+10:: L--> 7, R--> 14
+7:: L--> 4, R--> 9
+4:: L--> None, R--> None
+9:: L--> None, R--> None
+14:: L--> 11, R--> 16
+11:: L--> None, R--> None
+16:: L--> None, R--> None
+
+
+
+
+## Root to Node Path in Binary tree::
+                1. Check if root is None.
+                2. Check if the Node is root itself.
+                3. check on the left side, if it returns None then we call the right side. if left does not return
+                   none append the root.data to the left Output.
+                4. do the same right side of the tree.
+                5. if both left and right returns None we return None.
+
+
+###Question
+Given a BST and an integer k. Find and return the path from the node with data k and root 
+(if a node with data k is present in given BST) in a list. Return empty list otherwise.
+
+Note: Assume that BST contains all unique elements.
+
+Answer:
+
+def nodeToRootPath(root, s):
+    # if root is None, we did not find s
+    if root == None:
+        return None
+
+    # check for root itself
+    if root.data == s:
+        path = []
+        path.append(root.data)
+        return path
+
+    # First call the left side and check
+    leftOutput = nodeToRootPath(root.left, s)
+    # if it is not none we return
+    if leftOutput != None:
+        leftOutput.append(root.data)
+        return leftOutput
+
+    # if left is None we call right 
+    rightOutput = nodeToRootPath(root.right, s)
+    if rightOutput != None:
+        rightOutput.append(root.data)
+        return rightOutput
+    else:
+        return None
+
+nodeToRootPath(btn1, 9)
+
+[9, 7, 10]
+
+
+
+
+###Question
+Which one of the following is the tightest upper bound that represents the time complexity of inserting an 
+object into a balanced binary search tree of n nodes?
+
+Answer:
+In a balanced Binary search tree, such as an AVL tree or a red-black tree, the height of the tree is logarithmic with
+respect to the number of nodes. so the time complexity for insert in BST is O(logn).
+
+
+
+
+###Question
+What are the worst-case complexities of insertion and deletion of a key in a binary search tree?
+
+Note : Assume the tree to be unbalanced.
+
+Answer:
+O(n) for both insertion and deletion because the BST is Unbalanced and we need to visit each node.
+
+
+
+
+###Question
+Implemnt BST Class
+
+Answer:
+IMP:: All the Ops in BST Class are O(height) i.e O(logn), because in Balanced BST the height is equal to logn. if 
+      BST is not balanced the height is n.
+class BST:
+    def __init__(self):
+        self.root = None
+        self.numNodes = 0
+
+
+    def insertHelper(self, root, data):
+        # Base case: if we've reached an empty position, create a new node here
+        if root == None:
+            rootNode = BinaryTreeNode(data)
+            return rootNode
+
+        # If data is smaller than current node, insert in left subtree
+        if root.data > data:
+            # Recursively insert in left subtree and update left child
+            root. left = self.insertHelper(root.left, data)
+            return root
+        else:
+            # If data is greater than or equal to current node, insert in right subtree
+            root. right = self.insertHelper(root.right, data)
+            return root
+            
+    
+    def insert(self, data):
+        self.numNodes += 1 # Increment node count
+        self.root = self.insertHelper(self.root, data) # Insert and update root
+
+    
+    def min(self, root):
+        # Base case: empty tree
+        if root == None:
+            return 100000 # Return a large number as sentinel value
+
+        # If no left child exists, current node has the minimum value
+        if root.left == None:
+            return root.data
+
+        # Otherwise, minimum is in the left subtree
+        return self.min(root.left)
+
+    def deleteHelper(self, root, data):
+        # Base case: data not found
+        if root == None:
+            return False, None
+
+        # If data is greater than current node, search in right subtree
+        if root.data < data:
+            # call right 
+            deleted, newRightNode = self.deleteHelper(root.right, data)
+            root.right = newRightNode # Update right child
+            return deleted, root
+
+        # If data is less than current node, search in left subtree
+        if root.data > data:
+            # call left
+            deleted, newLeftNode = self.deleteHelper(root.left, data)
+            root.left = newLeftNode # Update left child
+            return deleted, root
+
+        # Found the node to delete (root.data == data)
+        # Case 1: Leaf node (no children)
+        if root.left == None and root.right == None:
+            return True, None
+
+        # Case 2: Node has only one child
+        if root.left == None:
+            return True, root.right # Replace with right child
+
+        if root.right == None:
+            return True, root.left # Replace with left child
+
+        # Case 3: Node has two children
+        # Strategy: Replace with minimum value from right subtree (in-order successor)
+        replacement = self.min(root.right)
+        root.data = replacement # Replace current node's data
+        # Delete the replacement node from right subtree
+        deleted, newRightNode = self.deleteHelper(root.right, replacement)
+        root.right = newRightNode # Update right child
+        return True, root
+    
+    def delete(self, data):
+        deleted, newRoot = self.deleteHelper(self.root, data)
+        if deleted:
+            self.numNodes -= 1 # Decrement node count only if deletion succeeded
+        self.root = newRoot
+        return deleted
+
+
+    def count(self):
+        return self.numNodes
+
+    def isPresenthelper(self, root, data):
+        # Base case: reached end of tree without finding data
+        if root == None:
+            return False
+
+        # Found the data
+        if root.data == data:
+            return True
+
+        # If data is smaller, search in left subtree
+        if root.data > data:
+            # call left side
+            return self.isPresenthelper(root.left, data)
+        else:
+            # If data is larger, search in right subtree
+            return self.isPresenthelper(root.right, data)
+    
+    def isPresent(self, data):
+        return self.isPresenthelper(self.root, data)
+
+
+    def printTreeHelper(self, rootNode):
+        # Base case: empty node
+        if rootNode == None:
+            return
+
+        print(rootNode.data, end=":: ")
+    
+        if rootNode.left != None:
+            print("L-->", rootNode.left.data, end=", ")
+        else:
+            print("L-->", "None", end=", ")
+    
+        if rootNode.right != None:
+            print("R-->", rootNode.right.data, end="")
+        else:
+            print("R-->", "None", end="")
+    
+        print()
+    
+        # recursive call for Childrens
+        self.printTreeHelper(rootNode.left)
+        self.printTreeHelper(rootNode.right)
+    
+    def printTree(self):
+        self.printTreeHelper(self.root) 
+
+
+b = BST()
+
+b.insert(10)
+b.insert(5)
+b.insert(12)
+b.insert(14)
+b.insert(55)
+b.insert(11)
+b.insert(1)
+b.insert(3)
+
+b.printTree()
+
+print(b.isPresent(5))
+print(b.isPresent(8))
+
+print(b.delete(4))
+print(b.delete(1))
+
+print(b.count())
+
+b.printTree()
+
+10:: L--> 5, R--> 12
+5:: L--> 1, R--> None
+1:: L--> None, R--> 3
+3:: L--> None, R--> None
+12:: L--> 11, R--> 14
+11:: L--> None, R--> None
+14:: L--> None, R--> 55
+55:: L--> None, R--> None
+True
+False
+False
+True
+7
+10:: L--> 5, R--> 12
+5:: L--> 3, R--> None
+3:: L--> None, R--> None
+12:: L--> 11, R--> 14
+11:: L--> None, R--> None
+14:: L--> None, R--> 55
+55:: L--> None, R--> None
+
+
+
+###Question
+Implement the BST class which includes following functions -
+
+1. insert -
+Given an element, insert that element in the BST at the correct position. If element is equal to the data of the node, 
+insert it in the left subtree.
+
+2. search
+Given an element, find if that is present in BST or not. Return true or false.
+
+3. delete -
+Given an element, remove that element from the BST. If the element which is to be deleted has both children, 
+replace that with the minimum element from right sub-tree.
+
+4. printTree (recursive) -
+Print the BST in in the following format -
+
+For printing a node with data N, you need to follow the exact format -
+
+N:L:x,R:y
+where, N is data of any node present in the binary tree. x and y are the values of left and right child of node N. 
+Print the children only if it is not null.
+
+There is no space in between.
+
+You need to print all nodes in the recursive format in different lines.
+
+Answer:
+IMP:: All the Ops in BST Class are O(height) i.e O(logn), because in Balanced BST the height is equal to logn. if 
+      BST is not balanced the height is n.
+class BST:
+    def __init__(self):
+        self.root = None
+        self.numNodes = 0
+
+
+    def insertHelper(self, root, data):
+        # Base case: if we've reached an empty position, create a new node here
+        if root == None:
+            rootNode = BinaryTreeNode(data)
+            return rootNode
+
+        # If data is smaller than current node, insert in left subtree
+        if root.data >= data:
+            # Recursively insert in left subtree and update left child
+            root. left = self.insertHelper(root.left, data)
+            return root
+        else:
+            # If data is greater than or equal to current node, insert in right subtree
+            root. right = self.insertHelper(root.right, data)
+            return root
+            
+    
+    def insert(self, data):
+        self.numNodes += 1 # Increment node count
+        self.root = self.insertHelper(self.root, data) # Insert and update root
+
+    
+    def min(self, root):
+        # Base case: empty tree
+        if root == None:
+            return 100000 # Return a large number as sentinel value
+
+        # If no left child exists, current node has the minimum value
+        if root.left == None:
+            return root.data
+
+        # Otherwise, minimum is in the left subtree
+        return self.min(root.left)
+
+    def deleteHelper(self, root, data):
+        # Base case: data not found
+        if root == None:
+            return False, None
+
+        # If data is greater than current node, search in right subtree
+        if root.data < data:
+            # call right 
+            deleted, newRightNode = self.deleteHelper(root.right, data)
+            root.right = newRightNode # Update right child
+            return deleted, root
+
+        # If data is less than current node, search in left subtree
+        if root.data > data:
+            # call left
+            deleted, newLeftNode = self.deleteHelper(root.left, data)
+            root.left = newLeftNode # Update left child
+            return deleted, root
+
+        # Found the node to delete (root.data == data)
+        # Case 1: Leaf node (no children)
+        if root.left == None and root.right == None:
+            return True, None
+
+        # Case 2: Node has only one child
+        if root.left == None:
+            return True, root.right # Replace with right child
+
+        if root.right == None:
+            return True, root.left # Replace with left child
+
+        # Case 3: Node has two children
+        # Strategy: Replace with minimum value from right subtree (in-order successor)
+        replacement = self.min(root.right)
+        root.data = replacement # Replace current node's data
+        # Delete the replacement node from right subtree
+        deleted, newRightNode = self.deleteHelper(root.right, replacement)
+        root.right = newRightNode # Update right child
+        return True, root
+    
+    def delete(self, data):
+        deleted, newRoot = self.deleteHelper(self.root, data)
+        if deleted:
+            self.numNodes -= 1 # Decrement node count only if deletion succeeded
+        self.root = newRoot
+        return deleted
+
+
+    def count(self):
+        return self.numNodes
+
+    def isPresenthelper(self, root, data):
+        # Base case: reached end of tree without finding data
+        if root == None:
+            return False
+
+        # Found the data
+        if root.data == data:
+            return True
+
+        # If data is smaller, search in left subtree
+        if root.data > data:
+            # call left side
+            return self.isPresenthelper(root.left, data)
+        else:
+            # If data is larger, search in right subtree
+            return self.isPresenthelper(root.right, data)
+    
+    def isPresent(self, data):
+        return self.isPresenthelper(self.root, data)
+
+
+    def printTreeHelper(self, rootNode):
+        # Base case: empty node
+        if rootNode == None:
+            return
+
+        print(rootNode.data, end=":: ")
+    
+        if rootNode.left != None:
+            print("L-->", rootNode.left.data, end=", ")
+        else:
+            print("L-->", "None", end=", ")
+    
+        if rootNode.right != None:
+            print("R-->", rootNode.right.data, end="")
+        else:
+            print("R-->", "None", end="")
+    
+        print()
+    
+        # recursive call for Childrens
+        self.printTreeHelper(rootNode.left)
+        self.printTreeHelper(rootNode.right)
+    
+    def printTree(self):
+        self.printTreeHelper(self.root) 
+

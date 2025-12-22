@@ -1,0 +1,441 @@
+1. we use Binary Search on arrays but the condition is array needs to be sorted.
+
+2. we follow the same approach with trees also.
+
+3. Everything on the LEFT of ROOT is Smaller and on the RIGHT is Larger. Root is the middle Node.
+                  Left < ROOT <= Right
+
+4. the above condition needs to be TRUE for Every Node i.e left smaller and right larger.
+
+
+## Search Node in BST::
+          1. check if node data(x) is less than or greater than/equal to ROOT.
+          2. if it is less than we only call the Search on the left side or Vice-Versa.
+          3. The Time Complexity for BST is O(h), h is the height of Tree.
+
+
+
+## Base Code (Sorted balanced Binary Tree)
+
+class BinaryTreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+btn1 = BinaryTreeNode(10)
+btn2 = BinaryTreeNode(7)
+
+btn3 = BinaryTreeNode(14)
+btn4 = BinaryTreeNode(4)
+
+btn5 = BinaryTreeNode(9)
+btn6 = BinaryTreeNode(16)
+
+btn8 = BinaryTreeNode(11)
+
+btn1.left = btn2
+btn1.right = btn3
+
+btn2.left = btn4
+btn2.right = btn5
+
+btn3.left = btn8
+btn3.right = btn6
+
+
+def dispayTree(rootNode):
+    if rootNode == None:
+        return
+
+    print(rootNode.data, end=":: ")
+
+    if rootNode.left != None:
+        print("L-->", rootNode.left.data, end=", ")
+    else:
+        print("L-->", "None", end=", ")
+
+    if rootNode.right != None:
+        print("R-->", rootNode.right.data, end="")
+    else:
+        print("R-->", "None", end="")
+
+    print()
+
+    # recursive call for Childrens
+    dispayTree(rootNode.left)
+    dispayTree(rootNode.right)
+
+dispayTree(btn1)
+
+10:: L--> 7, R--> 14
+7:: L--> 4, R--> 9
+4:: L--> None, R--> None
+9:: L--> None, R--> None
+14:: L--> 11, R--> 16
+11:: L--> None, R--> None
+16:: L--> None, R--> None
+
+## Base Code (Sorted balanced Binary Tree)
+
+
+###Question
+Given a BST and an integer k. Find if the integer k is present in given BST or not. You have to return true, 
+if node with data k is present, return false otherwise.
+
+Note:
+Assume that BST contains all unique elements.
+
+Answer:
+
+def search(root, x):
+    # base case
+    if root == None:
+        return False
+
+    # if root.data is equal to x
+    if root.data == x:
+        return True
+    # x is on the Left side of Tree
+    elif root.data > x:
+        # search only on the left side
+        return search(root.left, x)
+    # x is on the right side of tree
+    else:
+        return search(root.right, x)
+
+search(btn1, 16)
+
+True
+
+
+
+
+###Question
+The run time for traversing all the nodes of a binary search tree with n nodes and printing them in an order is
+
+Answer:
+O(n)
+
+
+
+
+## Print Elements In Range K1 and K2::
+         1. if we are doing the same in not sorted Binary tree we need to go on each node and check root.data lies
+            in the k1 and k2, then call recursion on left and right.
+
+         2. In Sorted BST, if root is less than range we only call right side and vice-versa.
+
+         3. when the root is between the range we need to call both sides.
+                                           k1 <= k2
+                                           ==> if root is < k1, call only right
+                                           ==> if root is > k2, call only left
+                                           ==> if root in between k1 and k2, call both sides 
+
+
+
+
+###Question
+Given a Binary Search Tree and two integers k1 and k2, find and print the elements which are in range 
+k1 and k2 (both inclusive).
+
+Print the elements in increasing order.
+
+Answer:
+
+def elementsInRangeK1K2(root, k1, k2):
+    if root == None:
+        return
+
+    if root.data < k1:
+        elementsInRangeK1K2(root.right, k1, k2)
+    elif root.data > k2:
+        elementsInRangeK1K2(root.left, k1, k2)
+    else:
+        elementsInRangeK1K2(root.left, k1, k2)
+        print(root.data, end=" ")
+        elementsInRangeK1K2(root.right, k1, k2)
+
+elementsInRangeK1K2(btn1, 5, 15)
+
+7 9 10 11 14
+
+
+
+## Convert Sorted Array to BST::
+           1. we try to build a Balanced BT.
+           2. take the middle element and creat the root node.
+           3. take the left side of middle element and pass it recursively to build left sub-tree.
+           4. take the right side of middle element and pass it recursively to build right sub-tree.
+           5. Connect these left and right sub-trees with ROOT Node.
+           6. return the Root node
+
+
+
+###Question
+Build BST
+
+Given a sorted integer array A of size n, which contains all unique elements. You need to construct a balanced 
+BST from this input array. Return the root of constructed BST.
+
+Note: If array size is even, take first mid as root.
+
+Answer:
+
+def buildTreefromArray(arr):
+    # base case
+    if len(arr) == 0:
+        return None
+
+    low = 0
+    high = len(arr) - 1
+
+    # take the middle Element 
+    middle = low + (high - low) // 2
+
+    # create rootNode
+    rootNode = BinaryTreeNode(arr[middle])
+
+    # call recursion on them to get the left and right sub-trees
+    leftSubtree = buildTreefromArray(arr[:middle])
+    rightSubtree = buildTreefromArray(arr[middle + 1:])
+
+    # connect them with root node
+    rootNode.left = leftSubtree
+    rootNode.right = rightSubtree
+
+    return rootNode
+
+arr = [1, 2, 3, 4, 5, 6, 7]
+
+new_build_tree = buildTreefromArray(arr)
+dispayTree(new_build_tree)
+
+4:: L--> 2, R--> 6
+2:: L--> 1, R--> 3
+1:: L--> None, R--> None
+3:: L--> None, R--> None
+6:: L--> 5, R--> 7
+5:: L--> None, R--> None
+7:: L--> None, R--> None
+
+
+
+###Question
+Which type of traversal of binary search tree outputs the value in sorted order ?
+
+Answer:
+In-order Traversal of a binary search tree outputs the values in sorted order.
+
+
+
+## Check is BST::
+         1. Given a Binary tree and check if it is a BST.
+
+
+
+###Question
+Check if BT is BST
+
+Answer One:
+# In Worst Case Time Com:: O(n^2)
+
+# get the minimum node value for tree
+def minTree(root):
+    if root == None:
+        return 100000 # ideally should be float(inf)
+
+    leftMin = minTree(root.left)
+    rightMin = minTree(root.right)
+    return min(leftMin, rightMin, root.data)
+
+# get the maximum node value for tree
+def maxTree(root):
+    if root == None:
+        return -100000 # ideally should be float(-inf)
+
+    leftMax = maxTree(root.left)
+    rightMax = maxTree(root.right)
+    return max(leftMax, rightMax, root.data)
+
+# check BST
+def isBST(root):
+    if root == None:
+        # empty BT is BST
+        return True
+
+    # we get the leftMax and rightMin Values
+    leftMax = maxTree(root.left)
+    rightMin = minTree(root.right)
+
+    # new we check the values with root
+    # leftMax should be less than and rightMin should be more than root
+    # if root is greater than rightMin and root is less than or equal to leftmax we return False
+    if root.data > rightMin or root.data <= leftMax:
+        return False
+
+    isLeftBST = isBST(root.left)
+    isRightBST = isBST(root.right)
+
+    return isLeftBST and isRightBST
+
+isBST(btn1)
+
+True
+
+
+Asnwer Two(Better Approach like Diameter Solution): RECOMMENDED
+
+"""
+APPROACH: Return (min, max, isBST) for each subtree
+          - min: Minimum value in subtree
+          - max: Maximum value in subtree  
+          - isBST: Whether subtree is a valid BST
+
+Returns:
+        tuple: (minimum, maximum, isBST)
+            - minimum (int): Smallest value in this subtree
+            - maximum (int): Largest value in this subtree
+            - isBST (bool): True if this subtree is a valid BST
+            
+    Time Complexity: O(n) - visits each node once
+    Space Complexity: O(h) - recursion stack height
+
+In Worst Case Time Com is O(n)
+"""
+
+def isBST_OP(root):
+    # Base Case: Empty node (None)
+    # Return sentinel values that won't interfere with comparisons
+    if root == None:
+        return float('inf'), float('-inf'), True
+
+    # Step 1: Recursively get min, max, and BST status from LEFT subtree
+    # leftMin = smallest value in left subtree
+    # leftMax = largest value in left subtree (IMPORTANT: must be < root for BST)
+    # isLeftBST = whether left subtree is a valid BST
+    leftMin, leftMax, isLeftBST = isBST_OP(root.left)
+    # Step 2: Recursively get min, max, and BST status from RIGHT subtree
+    # rightMin = smallest value in right subtree (IMPORTANT: must be >= root for BST)
+    # rightMax = largest value in right subtree
+    # isRightBST = whether right subtree is a valid BST
+    rightMin, rightMax, isRightBST = isBST_OP(root.right)
+
+    # Step 3: Calculate MINIMUM value in current subtree (rooted at current node)
+    # The minimum could be:
+    # - The leftmost value in left subtree (leftMin)
+    # - The leftmost value in right subtree (rightMin) - unusual but possible
+    # - The root itself (if it has no left child)
+    minimum = min(leftMin, rightMin, root.data)
+    # Step 4: Calculate MAXIMUM value in current subtree
+    # The maximum could be:
+    # - The rightmost value in left subtree (leftMax)
+    # - The rightmost value in right subtree (rightMax) - most common
+    # - The root itself (if it has no right child)
+    maximum = max(leftMax, rightMax, root.data)
+
+    # Step 5: Check if current tree is a valid BST
+    # Start by assuming it's valid
+    isTreeBST = True
+
+    # Step 5a: BST Violation Check - Compare root with left subtree
+    # For a valid BST: ALL values in left subtree must be < root.data
+    # leftMax is the LARGEST value in left subtree
+    # So if root.data <= leftMax, it means root is not greater than all left values
+    #
+    # Also check right subtree: root.data must be <= rightMin (smallest in right)
+    # Note: The condition root.data > rightMin checks if root > smallest right value
+    #       This means some right values might be < root, which violates BST
+    if root.data <= leftMax or root.data > rightMin:
+        isTreeBST = False
+    # Step 5b: Check if BOTH subtrees are valid BSTs
+    # Even if the root satisfies BST conditions locally, if either subtree
+    # is not a BST, then the entire tree cannot be a BST
+    if not(isLeftBST) or not(isRightBST):
+        isTreeBST = False
+
+    # Step 6: Return the three values for parent node to use
+    # Parent will use these to check its own BST properties
+    return minimum, maximum, isTreeBST
+
+min_val, max_val, isBinaryTree_BST = isBST_OP(btn1)
+print("Tree Min:", min_val)
+print("Tree Max:", max_val)
+print("Is BT BST:", isBinaryTree_BST)
+
+Tree Min: 4
+Tree Max: 16
+Is BT BST: True
+
+
+Answer Better Solution:
+
+"""
+APPROACH: Use Valid Range Constraints
+Instead of checking values after visiting children, we pass down the
+ALLOWED RANGE for each node as we traverse.
+
+Time Complexity: O(n) - visits each node once
+Space Complexity: O(h) - recursion stack height
+"""
+
+def is_BT_BST_OP(root, min_range, max_range):
+    # Base Case: Empty node (None) is always a valid BST
+    # When we reach beyond a leaf node, there's nothing to violate BST property
+    if root == None:
+        return True
+
+    # Step 1: Check if CURRENT node violates its range constraint
+    # The current node MUST be within [min_range, max_range]
+    # 
+    # If root.data < min_range: Node is too small (violates ancestor constraint)
+    # If root.data > max_range: Node is too large (violates ancestor constraint)
+    #
+    # Example: If we're checking node 7 with range [5, 9]:
+    #          7 >= 5 ✓ and 7 <= 9 ✓, so it's valid
+    #          But if node was 12: 12 > 9 ✗, constraint violated!
+    if root.data < min_range or root.data > max_range:
+        return False
+
+    # Step 2: Check LEFT subtree with UPDATED range constraints
+    # For left child: All values must be LESS than current node
+    # 
+    # New range for left subtree: [min_range, root.data - 1]
+    # - Lower bound stays the same (min_range from parent)
+    # - Upper bound becomes (root.data - 1) because left must be < root
+    #
+    # Why root.data - 1?
+    # - Left child must be STRICTLY less than root
+    # - If root = 10, left subtree can have values up to 9
+    #
+    # Example: root = 10, original range = [-100000, 100000]
+    #          Left range becomes: [-100000, 9]
+    isLeftWithinConstraint = is_BT_BST_OP(root.left, min_range, root.data - 1)
+    # Step 3: Check RIGHT subtree with UPDATED range constraints
+    # For right child: All values must be GREATER than or EQUAL to current node
+    #
+    # New range for right subtree: [root.data, max_range]
+    # - Lower bound becomes root.data (right must be >= root)
+    # - Upper bound stays the same (max_range from parent)
+    #
+    # Why root.data (not root.data + 1)?
+    # - BST allows duplicates in right subtree
+    # - If root = 10, right subtree can have 10, 11, 12, ...
+    #
+    # Example: root = 10, original range = [-100000, 100000]
+    #          Right range becomes: [10, 100000]
+    isRightWithinConstraint = is_BT_BST_OP(root.right, root.data, max_range)
+
+    # Step 4: Return TRUE only if BOTH subtrees are valid BSTs
+    # All three conditions must be met:
+    # 1. Current node is within its range ✓ (checked in Step 1)
+    # 2. Left subtree is valid BST with proper constraints ✓
+    # 3. Right subtree is valid BST with proper constraints ✓
+    return isLeftWithinConstraint and isRightWithinConstraint
+
+isBinaryTree_BST_OP = is_BT_BST_OP(btn1, -100000, 100000)
+print("Is BT BST:", isBinaryTree_BST_OP)
+
+Is BT BST: True
+
+

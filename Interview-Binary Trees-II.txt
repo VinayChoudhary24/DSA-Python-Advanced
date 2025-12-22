@@ -1,0 +1,1218 @@
+##Base Code
+
+class BinaryTreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+btn1 = BinaryTreeNode(1)
+btn2 = BinaryTreeNode(2)
+
+btn3 = BinaryTreeNode(3)
+btn4 = BinaryTreeNode(4)
+
+btn5 = BinaryTreeNode(5)
+btn6 = BinaryTreeNode(6)
+
+btn7 = BinaryTreeNode(7)
+
+btn1.left = btn2
+btn1.right = btn3
+
+btn2.left = btn4
+btn2.right = btn5
+
+btn3.right = btn6
+
+btn5.left = btn7
+
+def dispayTree(rootNode):
+    if rootNode == None:
+        return
+
+    print(rootNode.data, end=":: ")
+
+    if rootNode.left != None:
+        print("L-->", rootNode.left.data, end=", ")
+    else:
+        print("L-->", "None", end=", ")
+
+    if rootNode.right != None:
+        print("R-->", rootNode.right.data, end="")
+    else:
+        print("R-->", "None", end="")
+
+    print()
+
+    # recursive call for Childrens
+    dispayTree(rootNode.left)
+    dispayTree(rootNode.right)
+
+dispayTree(btn1)
+
+1:: L--> 2, R--> 3
+2:: L--> 4, R--> 5
+4:: L--> None, R--> None
+5:: L--> 7, R--> None
+7:: L--> None, R--> None
+3:: L--> None, R--> 6
+6:: L--> None, R--> None
+
+
+
+
+
+## Remove Leaf nodes::
+            
+###Question
+Remove Leaf Nodes
+
+Answer:
+
+def removeLeafNodes(rootNode):
+    if rootNode == None:
+        return None
+
+     # if rootNode is the leaf Node
+    if rootNode.left == None and rootNode.right == None:
+        return None
+
+    # recursive Calls for Childrens
+    rootNode.left = removeLeafNodes(rootNode.left)
+    rootNode.right = removeLeafNodes(rootNode.right)
+
+    return rootNode
+
+rootNode = removeLeafNodes(btn1)
+dispayTree(rootNode)
+
+1:: L--> 2, R--> 3
+2:: L--> None, R--> 5
+5:: L--> None, R--> None
+3:: L--> None, R--> None
+
+
+
+
+###Question
+Mirror Binary Tree
+
+For a given Binary Tree of type integer, update it with its corresponding mirror image.
+
+Answer:
+
+def mirrorBinaryTree(root):
+    # base case 
+    if root == None:
+        return None
+    
+    # Exchange the Nodes left and right
+    # swap left and right children
+    root.left, root.right = root.right, root.left
+
+    # recursive call for childrens
+    mirrorBinaryTree(root.left)
+    mirrorBinaryTree(root.right)
+
+    return root
+
+rootNode = mirrorBinaryTree(btn1)
+dispayTree(rootNode)
+
+1:: L--> 3, R--> 2
+3:: L--> 6, R--> None
+6:: L--> None, R--> None
+2:: L--> 5, R--> 4
+5:: L--> None, R--> 7
+7:: L--> None, R--> None
+4:: L--> None, R--> None
+
+
+
+
+## BALANCED TREE::
+            1. for each node in tree, that node's left and right sub-tree should not have height difference of 
+               more than 1
+
+
+###Question
+Check if Binary Tree is balanced
+
+Answer (Approach 1): 
+
+def heightOfTree(root):
+    # Base Case
+    if root == None:
+        return 0
+    # self work
+    return 1 + max(heightOfTree(root.left), heightOfTree(root.right))
+
+
+# Time Complexity:: Best case O(nlogn) and worst case O(n^2)
+def isTreeBalanced(rootNode):
+    if rootNode == None:
+        return True
+
+    # get the height of left and right for root node
+    leftHeight = heightOfTree(rootNode.left)
+    rightHeight = heightOfTree(rootNode.right)
+
+    # check the difference between left and right height i.e not more than 1
+    if leftHeight - rightHeight > 1 or rightHeight - leftHeight > 1:
+        # Tree is not balanced
+        return False
+
+    # recursive call for Childrens
+    isLeftBalanced = isTreeBalanced(rootNode.left)
+    isRightBalanced = isTreeBalanced(rootNode.right)
+
+    # check if isLeftBalanced and isRightBalanced are balanced
+    if isLeftBalanced and isRightBalanced:
+        return True
+    else:
+        return False
+
+is_tree_balanced = isTreeBalanced(btn1)
+print("Is tree balanced:", is_tree_balanced)
+dispayTree(btn1)
+
+Is tree balanced: True
+1:: L--> 2, R--> 3
+2:: L--> 4, R--> 5
+4:: L--> None, R--> None
+5:: L--> 7, R--> None
+7:: L--> None, R--> None
+3:: L--> None, R--> 6
+6:: L--> None, R--> None
+
+
+Answer (Better Approach):
+# Time Complexity:: Best case O(nlogn) and worst case O(n)
+
+"""
+Check if a binary tree is balanced and return its height.
+    
+    A balanced tree is one where the height difference between left and right 
+    subtrees of any node is at most 1.
+    
+    Args:
+        rootNode: The root node of the tree/subtree to check
+        
+    Returns:
+        tuple: (height, isBalanced)
+            - height (int): The height of the tree (number of edges from root to deepest leaf)
+            - isBalanced (bool): True if tree is balanced, False otherwise
+"""
+def getheightAndCheckBalance(rootNode):
+    # Base Case: Empty tree has height 0 and is considered balanced
+    if rootNode == None:
+        return 0, True
+
+    # Recursive Step: Get height and balance status from left subtree
+    # lh = left height, isLeftBalanced = whether left subtree is balanced
+    lh, isLeftBalanced = getheightAndCheckBalance(rootNode.left)
+    # Recursive Step: Get height and balance status from right subtree
+    # rh = right height, isRightBalanced = whether right subtree is balanced
+    rh, isRightBalanced = getheightAndCheckBalance(rootNode.right)
+
+    # get the height
+    # Height = 1 (current node) + maximum height of left or right subtree
+    h = 1 + max(lh, rh)
+
+    # check the difference between left and right height i.e not more than 1
+    # Check Balance Condition at Current Node:
+    # If the absolute difference between left and right heights is > 1,
+    # then this node is unbalanced (tree is not balanced)
+    if lh - rh > 1 or rh -lh > 1:
+        return h, False
+
+    # Check if Both Subtrees are Balanced:
+    # Even if current node's heights differ by ≤ 1, we need to ensure
+    # that both left and right subtrees are also balanced
+    if isLeftBalanced and isRightBalanced:
+        # Both subtrees balanced AND current node balanced → entire tree balanced
+        return h, True
+    else:
+        # At least one subtree is unbalanced → entire tree is unbalanced
+        return h, False
+
+
+def checkTreeBalanced(rootNode):
+    h, isBinaryTreeBalanced = getheightAndCheckBalance(rootNode)
+    return isBinaryTreeBalanced
+
+is_tree_balanced = checkTreeBalanced(btn1)
+print("Is tree balanced:", is_tree_balanced)
+
+Is tree balanced: True
+
+
+
+
+## DIAMETER OF BINARY TREE::
+               1. Distance between two Farthest nodes. 
+
+
+###Question
+Diameter of binary tree
+
+For a given Binary of type integer, find and return the ‘Diameter’.
+
+Diameter of a Tree
+The diameter of a tree can be defined as the maximum distance between two leaf nodes.
+Here, the distance is measured in terms of the total number of nodes present along the path of the two leaf nodes, 
+including both the leaves.
+
+Answer:
+
+def getDiameter(rootNode):
+    # Call helper function and return just the diameter
+    height, diameter = getHeightAndDiameter(rootNode)
+    return diameter
+
+def getHeightAndDiameter(rootNode):
+    """
+    Helper function that calculates both height and diameter.
+    
+    This approach is efficient (O(n)) as it calculates diameter
+    while computing height in a single traversal.
+    
+    Args:
+        rootNode: Current node being processed
+        
+    Returns:
+        tuple: (height, diameter)
+            - height: Number of nodes from current node to deepest leaf
+            - diameter: Maximum diameter found in this subtree
+    """
+    
+    # Base Case: Empty node has height 0 and diameter 0
+    if rootNode == None:
+        return 0, 0
+    
+    # Recursive Step: Get height and diameter from left subtree
+    leftHeight, leftDiameter = getHeightAndDiameter(rootNode.left)
+    
+    # Recursive Step: Get height and diameter from right subtree
+    rightHeight, rightDiameter = getHeightAndDiameter(rootNode.right)
+    
+    # Calculate Height of Current Node:
+    # Height = 1 (current node) + maximum height of children
+    currentHeight = 1 + max(leftHeight, rightHeight)
+    
+    # Calculate Diameter Passing Through Current Node:
+    # If the longest path passes through this node, it would be:
+    # left height + right height + 1 (current node)
+    diameterThroughRoot = leftHeight + rightHeight + 1
+    
+    # Find Maximum Diameter:
+    # The actual diameter could be:
+    # 1. The path passing through current node (diameterThroughRoot)
+    # 2. Entirely in the left subtree (leftDiameter)
+    # 3. Entirely in the right subtree (rightDiameter)
+    maxDiameter = max(diameterThroughRoot, leftDiameter, rightDiameter)
+    
+    # Return height and diameter for parent node to use
+    return currentHeight, maxDiameter
+
+diameter = getDiameter(btn1)
+print("diameter of tree is:", diameter)
+
+diameter of tree is: 6
+
+
+
+
+## LevelWise Input Binary Tree::
+              1. Take root Input 
+              2. Add it to Queue
+              3. While Queue is not Empty:
+                                         1. take the front of Queue (Parent)
+                                         2. asks for it's children's
+                                         3. if children value is valid, attach them to parent and add them to Queue
+                                         4. keep doing the same until Queue is Empty
+
+
+###Question
+LevelWise Input Binary Tree Using a Queue
+
+Answer:
+
+import queue
+
+def levelWiseTreeInput():
+    # create a queue for nodes
+    q = queue.Queue()
+
+    # take the root node 
+    print("Enter root node")
+    rootData = int(input())
+
+    # if root data is -1, no tree
+    if rootData == -1:
+        return None
+
+    # create the root node
+    rootNode = BinaryTreeNode(rootData)
+    # add it to the Queue
+    q.put(rootNode)
+
+    # loop on queue 
+    while (not(q.empty())):
+        current_node = q.get()
+        # take the left child
+        print("Enter left child of", current_node.data)
+        leftChildNode = int(input())
+        # if value is not -1 
+        if leftChildNode != -1:
+            # create the node
+            leftNode = BinaryTreeNode(leftChildNode)
+            current_node.left = leftNode
+            # add it to the Queue
+            q.put(leftNode)
+
+        # take the right child
+        print("Enter right child of", current_node.data)
+        rightChildNode = int(input())
+        # if value is not -1 
+        if rightChildNode != -1:
+            # create the node
+            rightNode = BinaryTreeNode(rightChildNode)
+            current_node.right = rightNode
+            # add it to the Queue
+            q.put(rightNode)
+
+    return rootNode
+
+level_Wise_Binary_Tree = levelWiseTreeInput()
+dispayTree(level_Wise_Binary_Tree)
+
+Enter root node
+ 11
+Enter left child of 11
+ 12
+Enter right child of 11
+ 13
+Enter left child of 12
+ 14
+Enter right child of 12
+ 15
+Enter left child of 13
+ -1
+Enter right child of 13
+ 16
+Enter left child of 14
+ -1
+Enter right child of 14
+ -1
+Enter left child of 15
+ 17
+Enter right child of 15
+ -1
+Enter left child of 16
+ -1
+Enter right child of 16
+ -1
+Enter left child of 17
+ -1
+Enter right child of 17
+ -1
+11:: L--> 12, R--> 13
+12:: L--> 14, R--> 15
+14:: L--> None, R--> None
+15:: L--> 17, R--> None
+17:: L--> None, R--> None
+13:: L--> None, R--> 16
+16:: L--> None, R--> None
+
+
+
+###Question
+Display and Take input level Wise 
+
+Answer:
+
+import queue
+
+def displayTreeLevelWise(rootNode):
+    if rootNode is None:
+        return
+
+    q = queue.Queue()
+    q.put(rootNode)
+
+    while not q.empty():
+        current_node = q.get()
+
+        print(current_node.data, end=":: ")
+
+        if current_node.left is not None:
+            print("L-->", current_node.left.data, end=", ")
+            q.put(current_node.left)
+        else:
+            print("L-->", "None", end=", ")
+
+        if current_node.right is not None:
+            print("R-->", current_node.right.data, end="")
+            q.put(current_node.right)
+        else:
+            print("R-->", "None", end="")
+
+        print()
+
+
+import queue
+
+def levelWiseTreeInput():
+    # create a queue for nodes
+    q = queue.Queue()
+
+    # take the root node 
+    print("Enter root node")
+    rootData = int(input())
+
+    # if root data is -1, no tree
+    if rootData == -1:
+        return None
+
+    # create the root node
+    rootNode = BinaryTreeNode(rootData)
+    # add it to the Queue
+    q.put(rootNode)
+
+    # loop on queue 
+    while not q.empty():
+        current_node = q.get()
+        # take the left child
+        print("Enter left child of", current_node.data)
+        leftChildNode = int(input())
+        # if value is not -1 
+        if leftChildNode != -1:
+            # create the node
+            leftNode = BinaryTreeNode(leftChildNode)
+            current_node.left = leftNode
+            # add it to the Queue
+            q.put(leftNode)
+
+        # take the right child
+        print("Enter right child of", current_node.data)
+        rightChildNode = int(input())
+        # if value is not -1 
+        if rightChildNode != -1:
+            # create the node
+            rightNode = BinaryTreeNode(rightChildNode)
+            current_node.right = rightNode
+            # add it to the Queue
+            q.put(rightNode)
+
+    return rootNode
+
+level_Wise_Binary_Tree = levelWiseTreeInput()
+displayTreeLevelWise(level_Wise_Binary_Tree)
+
+11:: L--> 12, R--> 13
+12:: L--> 14, R--> 15
+13:: L--> None, R--> 16
+14:: L--> None, R--> None
+15:: L--> 17, R--> None
+16:: L--> None, R--> None
+17:: L--> None, R--> None
+
+
+
+
+###Qusetion
+For a given a Binary Tree of type integer, print the complete information of every node, when traversed 
+in a level-order fashion.
+
+To print the information of a node with data D, you need to follow the exact format :
+
+           D:L:X,R:Y
+
+Where D is the data of a node present in the binary tree. 
+X and Y are the values of the left(L) and right(R) child of the node.
+Print -1 if the child doesn't exist.
+
+Answer:
+
+import queue
+
+def displayTreeLevelWise(rootNode):
+    if rootNode is None:
+        return
+
+    q = queue.Queue()
+    q.put(rootNode)
+
+    while not q.empty():
+        current_node = q.get()
+
+        print(current_node.data, end=":: ")
+
+        if current_node.left is not None:
+            print("L-->", current_node.left.data, end=", ")
+            q.put(current_node.left)
+        else:
+            print("L-->", -1, end=", ")
+
+        if current_node.right is not None:
+            print("R-->", current_node.right.data, end="")
+            q.put(current_node.right)
+        else:
+            print("R-->", -1, end="")
+
+        print()
+
+
+level_Wise_Binary_Tree = levelWiseTreeInput()
+displayTreeLevelWise(level_Wise_Binary_Tree)
+
+11:: L--> 12, R--> 13
+12:: L--> 14, R--> 15
+13:: L--> -1, R--> 16
+14:: L--> -1, R--> -1
+15:: L--> 17, R--> -1
+16:: L--> -1, R--> -1
+17:: L--> -1, R--> -1
+
+
+
+
+## Build Tree using Inorder and Preorder::
+              1. If we are given only one order i.e Inorder, Preordr or Postorder. we cannot build a tree because
+                 there can be many versions
+
+              2. if we 2 orders, we can build a UNIQUE TREE.
+
+              3. Firstly we need to Find the ROOT Node i.e Pre-Order (0)th Element. 
+              
+              4. Secondly Find INORDER and PREORDER for Left and Right Sub-Tree i.e find the root in In-order and 
+                 on the left of root is left sub-tree and on the right of root is right sub-tree. then we also 
+                 determine the left and right sub-tree in Pre-order.
+
+              5. Third, Use Recursion to build Left and Right Sub-Tree.
+
+              6. Fourth, Connect ROOT with both Sub-Tree. 
+
+
+
+###Question
+The inorder and preorder traversal of a binary tree are
+
+   Inorder:   d b e a p q r
+   PreOrder:  a b d e q p r 
+The postorder traversal of the binary tree is:
+
+Answer:
+
+d e b p r q a
+
+
+
+###Question
+For a given preorder and inorder traversal of a Binary Tree of type integer stored in an array/list, create the 
+binary tree using the given two arrays/lists. You just need to construct the tree and return the root.
+
+Note: Assume that the Binary Tree contains only unique elements.
+
+Answer:
+
+"""
+1. Preorder traversal: Root -> Left -> Right
+   - First element is ALWAYS the root
+   
+2. Inorder traversal: Left -> Root -> Right
+   - Elements before root are in LEFT subtree
+   - Elements after root are in RIGHT subtree
+"""
+def buildTreeFromPreIn(preorder, inorder):
+    # Base Case: If preorder is empty, no tree to build
+    # This happens when we reach a leaf node's children (null nodes)
+    if len(preorder) == 0:
+        return None
+
+     # Step 1: Identify the Root Node
+    # In preorder traversal, the FIRST element is always the root
+    rootData = preorder[0]
+    rootNode = BinaryTreeNode(rootData)
+
+    # Step 2: Find Root's Position in Inorder Array
+    # This position divides the tree into left and right subtrees
+    # Everything before this index = left subtree
+    # Everything after this index = right subtree
+    rootIndexInInorder = -1
+    for i in range(0, len(inorder)):
+        if inorder[i] == rootData:
+            rootIndexInInorder = i
+            break
+    # Error Check: If root not found in inorder, invalid input
+    if rootIndexInInorder == -1:
+        return None
+
+    # Step 3: Split Inorder Array into Left and Right Subtrees using Slice
+    # Left subtree: All elements BEFORE root in inorder
+    leftInorder = inorder[0:rootIndexInInorder]
+    rightInorder = inorder[rootIndexInInorder + 1:]
+
+    # Step 4: Calculate Size of Left Subtree
+    # We need this to split the preorder array correctly
+    lengthOfLeftSubtree = len(leftInorder)
+    
+    # Step 5: Split Preorder Array into Left and Right Subtrees using Slice
+    # Preorder format: [root, ...left subtree..., ...right subtree...]
+    # Skip first element (root), take next 'lengthOfLeftSubtree' elements
+    leftPreorder = preorder[1:lengthOfLeftSubtree + 1]
+    rightPreorder = preorder[lengthOfLeftSubtree + 1:]
+
+    # Step 6: Recursively Build Left and Right Subtrees
+    # Each recursive call:
+    # - Takes the preorder and inorder for that subtree
+    # - Builds the subtree using the same logic
+    # - Returns the root of that subtree
+    leftSubtree = buildTreeFromPreIn(leftPreorder, leftInorder)
+    rightSubtree = buildTreeFromPreIn(rightPreorder, rightInorder)
+
+     # Step 7: Connect Subtrees to Current Root
+    rootNode.left = leftSubtree
+    rootNode.right = rightSubtree
+
+    # Step 8: Return the Constructed Tree
+    return rootNode
+
+preorder = [1, 2, 4, 5, 3, 6, 7]
+inorder = [4, 2, 5, 1, 6, 3, 7]
+
+unique_tree = buildTreeFromPreIn(preorder, inorder)
+displayTreeLevelWise(unique_tree)
+
+1:: L--> 2, R--> 3
+2:: L--> 4, R--> 5
+3:: L--> 6, R--> 7
+4:: L--> -1, R--> -1
+5:: L--> -1, R--> -1
+6:: L--> -1, R--> -1
+7:: L--> -1, R--> -1
+
+
+
+###Question
+For a given postorder and inorder traversal of a Binary Tree of type integer stored in an array/list,
+create the binary tree using the given two arrays/lists. You just need to construct the tree and return the root.
+
+Note:
+Assume that the Binary Tree contains only unique elements.
+
+Answer:
+
+"""
+Construct a binary tree from its postorder and inorder traversal arrays.
+    
+    Args:
+        postOrder: List of node values in postorder (Left -> Right -> Root)
+        inOrder: List of node values in inorder (Left -> Root -> Right)
+        
+    Returns:
+        BinaryTreeNode: Root node of the constructed tree
+"""
+def buildTreeFromPostIn(postOrder, inOrder):
+    # Base Case: If postorder is empty, no tree to build
+    # This happens when we reach a leaf node's children (null nodes)
+    if len(postOrder) == 0:
+        return None
+
+    # Step 1: Identify the Root Node
+    # In postorder traversal, the LAST element is always the root
+    # (opposite of preorder where first element is root)
+    rootData = postOrder[-1]
+    rootNode = BinaryTreeNode(rootData)
+
+    # Step 2: Find Root's Position in Inorder Array
+    # This position divides the tree into left and right subtrees
+    # Everything before this index = left subtree
+    # Everything after this index = right subtree
+    rootIndexInInorder = -1
+    for i in range(0, len(inOrder)):
+        if inOrder[i] == rootData:
+            rootIndexInInorder = i
+            break
+
+    if rootIndexInInorder == -1:
+        return None
+
+    # Step 3: Split Inorder Array into Left and Right Subtrees
+    # Left subtree: All elements BEFORE root in inorder
+    leftInorder = inOrder[0:rootIndexInInorder]
+    # Right subtree: All elements AFTER root in inorder
+    rightInorder = inOrder[rootIndexInInorder + 1:]
+
+    # Step 4: Calculate Size of Left Subtree
+    # We need this to split the postorder array correctly
+    lengthOfLeftSide = len(leftInorder)
+
+    # Step 5: Split Postorder Array into Left and Right Subtrees
+    # Postorder format: [...left subtree..., ...right subtree..., root]
+    # Take first 'lengthOfLeftSide' elements for left subtree
+    leftPostorder = postOrder[0:lengthOfLeftSide]
+    # Take elements from end of left subtree to before root for right subtree
+    rightPostorder = postOrder[lengthOfLeftSide:-1]
+
+    # Step 6: Recursively Build Left and Right Subtrees
+    # Each recursive call:
+    # - Takes the postorder and inorder for that subtree
+    # - Builds the subtree using the same logic
+    # - Returns the root of that subtree
+    leftSubtree = buildTreeFromPostIn(leftPostorder, leftInorder)
+    rightSubtree = buildTreeFromPostIn(rightPostorder, rightInorder)
+
+    # Step 7: Connect Subtrees to Current Root
+    rootNode.left = leftSubtree
+    rootNode.right = rightSubtree
+
+    # Step 8: Return the Constructed Tree
+    return rootNode
+
+postorder = [4, 5, 2, 6, 7, 3, 1]
+inorder = [4, 2, 5, 1, 6, 3, 7]
+
+unique_tree2 = buildTreeFromPostIn(postorder, inorder)
+displayTreeLevelWise(unique_tree2)
+
+1:: L--> 2, R--> 3
+2:: L--> 4, R--> 5
+3:: L--> 6, R--> 7
+4:: L--> -1, R--> -1
+5:: L--> -1, R--> -1
+6:: L--> -1, R--> -1
+7:: L--> -1, R--> -1
+
+
+
+###Question
+Create and Insert Duplicate Nodes
+
+For a given a Binary Tree of type integer, duplicate every node of the tree and attach it to the left of itself.
+
+The root will remain the same. So you just need to insert nodes in the given Binary Tree.
+
+Answer:
+
+"""
+Insert a duplicate node as the left child of every node in the tree.
+    
+    The duplicate has the same data as the original node.
+    The original left child becomes the left child of the duplicate.
+    
+    Args:
+        root: Root node of the binary tree
+        
+    Returns:
+        BinaryTreeNode: Root of the modified tree
+        
+    Time Complexity: O(n) - visit each node once
+    Space Complexity: O(h) - recursion stack where h is height
+"""
+
+def insertDuplicateNode(root):
+    # Base Case: If node is None (empty tree or leaf's child), return None
+    # This stops recursion when we reach beyond leaf nodes
+    if root == None:
+        return None
+
+    # Step 1: Process LEFT Subtree First (Postorder traversal)
+    # Recursively insert duplicates in the entire left subtree
+    # before handling the current node
+    insertDuplicateNode(root.left)
+    # Step 2: Process RIGHT Subtree (Postorder traversal)
+    # Recursively insert duplicates in the entire right subtree
+    # before handling the current node
+    insertDuplicateNode(root.right)
+
+    # Step 3: Create Duplicate Node for Current Node
+    # The duplicate will have the same data as the current node
+    node_to_attach = root.data
+    attachNode = BinaryTreeNode(node_to_attach)
+
+    # Step 4: Insert Duplicate as Left Child (CRITICAL STEP)
+    # This preserves the original left subtree by making it the
+    # duplicate's left child
+    root.left, attachNode.left = attachNode, root.left
+
+    # Step 5: Return Modified Tree
+    # The right subtree remains unchanged in structure
+    # (though its nodes have been processed recursively)
+    return root
+
+duplicate_tree = insertDuplicateNode(btn1)
+displayTreeLevelWise(duplicate_tree)
+
+1:: L--> 1, R--> 3
+1:: L--> 2, R--> -1
+3:: L--> 3, R--> 6
+2:: L--> 2, R--> 5
+3:: L--> -1, R--> -1
+6:: L--> 6, R--> -1
+2:: L--> 4, R--> -1
+5:: L--> 5, R--> -1
+6:: L--> -1, R--> -1
+4:: L--> 4, R--> -1
+5:: L--> 7, R--> -1
+4:: L--> -1, R--> -1
+7:: L--> 7, R--> -1
+7:: L--> -1, R--> -1
+
+
+
+###Question
+Minimum and Maximum in the Binary Tree
+
+For a given a Binary Tree of type integer, find and return the minimum and the maximum data values.
+
+Return the output as an object of Pair class, which is already created.
+
+Note:
+All the node data will be unique and hence there will always exist a minimum and maximum node data.
+
+Answer:
+
+"""
+Find minimum and maximum values in a binary tree.
+    
+    This approach recursively finds min/max in left and right subtrees,
+    then compares with current node to find overall min/max.
+    
+    Args:
+        root: Root node of the binary tree
+        
+    Returns:
+        Pair: Object containing minimum and maximum values
+        
+    Time Complexity: O(n) - visit each node once
+    Space Complexity: O(h) - recursion stack where h is height
+"""
+
+class Pair :
+    def __init__(self, minimum, maximum):
+        self.minimum = minimum
+        self.maximum = maximum
+
+def getMinAndMax(root):
+    # Base Case: If tree is empty (shouldn't happen per problem statement)
+    # Return infinity values that will be overridden by actual nodes
+    if root == None:
+        return Pair(float('inf'), float('-inf'))
+
+    # Step 1: If this is a LEAF NODE (no children)
+    # Then this node itself is both min and max for this subtree
+    if root.left == None and root.right == None:
+        return Pair(root.data, root.data)
+
+    # Step 2: Recursively get min/max from LEFT subtree
+    # Returns a Pair object with minimum and maximum from left side
+    leftPair = getMinAndMax(root.left)
+    # Step 3: Recursively get min/max from RIGHT subtree
+    # Returns a Pair object with minimum and maximum from right side
+    rightPair = getMinAndMax(root.right)
+
+    # Step 4: Find MINIMUM among:
+    # - Current node's data
+    # - Minimum from left subtree
+    # - Minimum from right subtree
+    overallMin = min(root.data, leftPair.minimum, rightPair.minimum)
+    # Step 5: Find MAXIMUM among:
+    # - Current node's data
+    # - Maximum from left subtree
+    # - Maximum from right subtree
+    overallMax = max(root.data, leftPair.maximum, rightPair.maximum)
+
+    # Step 6: Return Pair object with overall min and max
+    return Pair(overallMin, overallMax)
+
+result = getMinAndMax(btn1)
+print("Min_Value", result.minimum)
+print("Max_Value", result.maximum)
+
+Min_Value 1
+Max_Value 7
+
+
+
+###Question
+Level order Traversal
+
+For a given a Binary Tree of type integer, print it in a level order fashion where each level will be printed on a 
+new line. Elements on every level will be printed in a linear fashion and a single space will separate them.
+
+Answer:
+
+def printLevelWise(root):
+    if root == None:
+        return None
+
+    q = queue.Queue()
+    q.put(root)
+
+    while not q.empty():
+        level_size = q.qsize()
+        for _ in range(level_size):
+            current_node = q.get()
+            print(current_node.data, end=" ")
+
+            if current_node.left is not None:
+                q.put(current_node.left)
+    
+            if current_node.right != None:
+                q.put(current_node.right)
+
+        print()
+            
+
+printLevelWise(btn1)
+
+1 
+2 3 
+4 5 6 
+7 
+
+
+
+
+###Question
+Path Sum Root to leaf
+
+For a given Binary Tree of type integer and a number K, print out all root-to-leaf paths where the sum of all 
+the node data along the path is equal to K.
+
+Answer:
+
+"""
+APPROACH: Use Backtracking
+          - Explore all paths from root to leaf
+          - Track current path in a list
+          - When reaching a leaf, check if sum equals K
+          - Backtrack to explore other paths
+
+KEY CONCEPT: We subtract current node's value from K as we go deeper,
+             so at leaf we just check if remaining K equals leaf's value.
+
+Time Complexity: O(n) - visits each node once
+Space Complexity: O(h) - recursion depth + path storage
+"""
+
+def rootToLeafPathsSumToK(root, k, path=None):
+    # Base Case 1: If current node is None (empty tree or beyond leaf)
+    # Nothing to process, just return
+    if root is None:
+        return
+
+    # Base Case 2: Initialize path list on first call
+    # This ensures we start with an empty path at the root
+    if path is None:
+        path = []
+
+    # Step 1: INCLUDE current node in the path
+    # This is the "choose" step in backtracking
+    # We're exploring the path that includes this node
+    path.append(root.data)
+
+    # Step 2: CHECK if we've reached a LEAF NODE
+    # A leaf node has no left and no right children
+    if root.left is None and root.right is None:
+        # Step 2a: Check if the remaining sum equals current leaf's value
+        # Since we subtract node values as we go down, if k equals
+        # the leaf's value, it means the total path sum equals original K
+        if k == root.data:
+            # Step 2b: FOUND a valid path! Print it
+            # *path unpacks the list: [5, 4, 11, 2] becomes: 5 4 11 2
+            print(*path)
+    else:
+        # Step 3: NOT a leaf node - explore children recursively
+        # 
+        # IMPORTANT: We pass (k - root.data) to children
+        # This represents the "remaining sum needed"
+        # 
+        # Example: If k=15 and root.data=1, we pass k=14 to children
+        # This way, at the leaf, we just check if leaf.data equals remaining k
+        
+        # Step 3a: Explore LEFT subtree with reduced sum
+        # The path list is passed by reference, so children see our additions
+        rootToLeafPathsSumToK(root.left, k - root.data, path)
+        # Step 3b: Explore RIGHT subtree with reduced sum
+        # After left subtree is fully explored, explore right
+        rootToLeafPathsSumToK(root.right, k - root.data, path)
+
+    # Step 4: BACKTRACK - Remove current node from path
+    # This is CRITICAL for backtracking!
+    # 
+    # Why? When we return from this function, we've explored all paths
+    # through this node. Now we need to explore paths that DON'T include
+    # this node, so we remove it from the path.
+    # 
+    # Example: After exploring 1→2→5→7, we backtrack by removing 7,
+    path.pop()
+
+    return root
+
+def rootPathSum(root, k):
+    rootToLeafPathsSumToK(root, k, path=None)
+
+rootPathSum(btn1, 15)
+
+1 2 5 7
+
+
+
+
+###Question
+Print Nodes at Distance K from node
+
+You are given a Binary Tree of type integer, a integer value of target node's data, and an integer value K.
+
+Print the data of all nodes that have a distance K from the target node. The order in which they would be 
+printed will not matter.
+
+Answer:
+
+"""
+CHALLENGE: Nodes can be at distance K in THREE directions:
+           1. DOWN in target's subtree (descendants)
+           2. UP to ancestors, then DOWN to their other subtrees
+           3. The ancestors themselves (if at correct distance)
+
+STRATEGY: Two-phase recursive approach
+          - Find the target node while traversing
+          - Use return values to propagate distance information upward
+          - At each ancestor, check both directions (self and other subtree)
+"""
+
+def printKDistanceDown(root, k):
+    # Base Case 1: If node is None (reached beyond leaf) or k is negative, stop
+    # k < 0 can happen when we search with negative remaining distance
+    if root is None or k < 0:
+        return
+
+     # Base Case 2: If k is 0, we've reached the target distance!
+    # This node is exactly K steps away from where we started
+    if k == 0:
+        print(root.data)
+        return
+
+    # Recursive Case: Continue searching in both subtrees
+    # Reduce k by 1 because we're going one level deeper
+    # Check LEFT child at distance k-1
+    printKDistanceDown(root.left, k - 1)
+    # Check RIGHT child at distance k-1
+    printKDistanceDown(root.right, k - 1)
+
+
+"""
+Uses a clever return value strategy:
+    - Returns -1 if target NOT in this subtree
+    - Returns distance (0, 1, 2, ...) if target IS in this subtree
+    
+    This return value helps ancestors calculate their distance from target!
+    
+    Args:
+        root: Current node being processed
+        node: Target node's data value (integer)
+        k: Required distance from target
+        
+    Returns:
+        int: Distance from current node to target (-1 if target not found)
+        
+    Time Complexity: O(n) - visits each node once
+    Space Complexity: O(h) - recursion stack height
+"""
+def nodesAtDistanceK(root, node, k):
+    # Base Case: If current node is None (empty tree or leaf's child)
+    # Target cannot be in a non-existent subtree
+    if root is None:
+        return -1
+
+    # CASE 1: FOUND THE TARGET NODE!
+    if root.data == node:
+        # Step 1: Print all nodes at distance K in target's subtree
+        # These are the nodes that are K steps DOWN from target
+        # Example: If target=5, k=2, this prints all nodes 2 levels below 5
+        printKDistanceDown(root, k)
+        # Step 2: Return 0 to indicate "I am the target"
+        # This tells parent nodes: "target is 0 steps away from this node"
+        # Parents will use this to calculate their own distance from target
+        return 0
+
+    # CASE 2: TARGET IS IN LEFT SUBTREE
+    # Recursively search in the LEFT subtree
+    # left_dist will be:
+    #   - The distance from left child to target (0, 1, 2, ...), OR
+    #   - -1 if target is not in left subtree
+    left_dist = nodesAtDistanceK(root.left, node, k)
+
+    # If left_dist != -1, target was FOUND in left subtree!
+    if left_dist != -1:
+        # Now we know:
+        # - Target is in left subtree
+        # - Distance from left child to target = left_dist
+        # - Distance from CURRENT node to target = left_dist + 1
+        #   (because current → left child = 1 edge, then left_dist more edges)
+        
+        # Sub-case 2a: Check if CURRENT node is at distance K from target
+        if left_dist + 1 == k:
+            # Current node is exactly K steps from target!
+            # Example: If target at distance 1 from left child, and k=2,
+            #          then current node is at distance 2 from target
+            print(root.data)
+        # Sub-case 2b: Find nodes in RIGHT subtree at distance K from target
+        else:
+            # Current node is NOT at distance K, but maybe nodes in right subtree are!
+            # 
+            # Calculate remaining distance needed in right subtree:
+            # 
+            # Total path: target → ... → left child → current → right child → ... → node
+            # Total distance = left_dist + 1 + 1 + (distance down right subtree)
+            #                = left_dist + 2 + (distance down right subtree)
+            # 
+            # We want total = k, so:
+            # k = left_dist + 2 + (distance down right)
+            # distance down right = k - left_dist - 2
+            #
+            # Example: target at dist 1 from left child, k=3
+            #          Path: target(1)→left(0)→current→right→node
+            #          Distance down right = 3 - 1 - 2 = 0 (right child itself)
+            printKDistanceDown(root.right, k - left_dist - 2)
+        # Return distance from current node to target
+        # This helps PARENT nodes calculate their distance
+        # Parent distance = (left_dist + 1) + 1 = left_dist + 2
+        return left_dist + 1
+
+    # CASE 3: TARGET IS IN RIGHT SUBTREE
+    # If we reach here, target was NOT in left subtree
+    # Now search in the RIGHT subtree
+    right_dist = nodesAtDistanceK(root.right, node, k)
+
+    # If right_dist != -1, target was FOUND in right subtree!
+    if right_dist != -1:
+        # Same logic as Case 2, but mirrored for right subtree
+        # Distance from current node to target = right_dist + 1
+        
+        # Sub-case 3a: Check if CURRENT node is at distance K from target
+        if right_dist + 1 == k:
+            print(root.data)
+        # Sub-case 3b: Find nodes in LEFT subtree at distance K from target
+        else:
+            # Calculate remaining distance needed in left subtree
+            # Formula: k - right_dist - 2
+            # (Same reasoning as Case 2b, but for left subtree)
+            printKDistanceDown(root.left, k - right_dist - 2)
+        # Return distance from current node to target
+        return right_dist + 1
+
+    # CASE 4: TARGET NOT FOUND IN THIS SUBTREE
+    # Target is neither in left nor right subtree
+    # This means target is not under current node at all
+    return -1
+
+nodesAtDistanceK(btn1, 2, 2)
+
+7
+3
+
