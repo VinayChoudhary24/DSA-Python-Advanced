@@ -588,3 +588,57 @@ printTreeLevelWise(rootNode)
 2:
 2:
 
+
+
+
+###Question
+Remove leaf Nodes in generic Tree
+
+Remove all leaf nodes from a given generic Tree. Leaf nodes are those nodes, which don't have any children.
+
+Note : Root will also be a leaf node if it doesn't have any child. You don't need to print the tree, just remove 
+all leaf nodes and return the updated root.
+
+Answer:
+
+def removeLeafNodes(root):
+    # Base case 1: If current node is None, nothing to remove
+    if root == None:
+        return None
+
+    # Base case 2: If current node is a leaf (no children), remove it
+    # By returning None, we signal to the parent that this node should be removed
+    if len(root.children) == 0:
+        return None
+
+    # Recursive case: Process all children
+    # IMPORTANT: Iterate in REVERSE order (from last to first)
+    # Why reverse? Because we're removing elements from the list while iterating
+    # If we went forward and removed an element, all subsequent indices would shift,
+    # causing us to skip elements or get index errors
+    for i in range(len(root.children) - 1, -1, -1):
+        # Get the child at current index
+        child = root.children[i]
+        # Recursively remove leaf nodes from this child's subtree
+        # This returns None if the child is/becomes a leaf, otherwise returns the child
+        updated_child = removeLeafNodes(child)
+
+        # If the child was removed (became None), remove it from parent's children list
+        # This handles two cases:
+        # 1. Child was already a leaf
+        # 2. Child became a leaf after all its children were removed
+        if updated_child is None:
+            root.children.pop(i) # Remove child at index i
+
+    # Return the current node (after processing all its children)
+    # Note: Even if all children were removed, we return root here
+    # The parent's call will check if this node is now a leaf and handle it
+    return root
+
+removeLeafNodes(rootNode)
+printTreeLevelWise(rootNode)
+
+10:1
+1:
+
+

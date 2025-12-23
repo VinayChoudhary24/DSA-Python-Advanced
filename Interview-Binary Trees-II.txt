@@ -1216,3 +1216,108 @@ nodesAtDistanceK(btn1, 2, 2)
 7
 3
 
+
+
+
+###Question
+Check Cousins
+
+Given the binary Tree and two nodes say ‘p’ and ‘q’. Determine whether the two nodes are cousins of each other or not. 
+Two nodes are said to be cousins of each other if they are at same level of the Binary Tree and have different parents.
+
+Do it in O(n).
+
+Answer:
+
+from collections import deque
+
+def isCousins(root, p, q):
+    # Base case: empty tree has no cousins
+    if root is None:
+        return False
+
+    # Initialize queue for BFS (Breadth-First Search)
+    # We store tuples of (node, parent) to track each node's parent
+    queue = deque()
+    queue.append((root, None))  # Root node has no parent
+
+    # Process tree level by level
+    while queue:
+        # Get the number of nodes at current level
+        size = len(queue)
+        # Track the parents of p and q if found at this level
+        p_parent = None
+        q_parent = None
+
+        # Process all nodes at the current level
+        for _ in range(size):
+            # Dequeue a node and its parent
+            node, parent = queue.popleft()
+
+            # Check if current node is p, store its parent
+            if node.data == p:
+                p_parent = parent
+            # Check if current node is q, store its parent
+            if node.data == q:
+                q_parent = parent
+
+            # Add left child to queue with current node as its parent
+            if node.left:
+                queue.append((node.left, node))
+            # Add right child to queue with current node as its parent
+            if node.right:
+                queue.append((node.right, node))
+
+        # After finishing one complete level, check if we found both nodes
+        # Case 1: Both nodes found at this level
+        if p_parent and q_parent:
+            # They are cousins only if they have different parents
+            return p_parent != q_parent   # same level, different parents
+        # Case 2: Found only one node at this level
+        # If we found one but not the other at this level,
+        # they cannot be cousins (different levels)
+        if (p_parent and not q_parent) or (q_parent and not p_parent):
+            return False   # found only one → not cousins
+
+        # Case 3: Neither found at this level, continue to next level
+
+    # If we've traversed the entire tree and didn't find both nodes
+    # or they were at different levels, they are not cousins
+    return False
+
+isCousins(btn1, 4, 6)
+
+True
+
+
+
+###Question
+Longest Leaf to root path
+
+Given a binary tree, return the longest path from leaf to root. Longest means, a path which contain maximum number 
+of nodes from leaf to root.
+
+Answer:
+
+def longestPath(root):
+    if root is None:
+        return []
+
+    # If leaf node
+    if root.left is None and root.right is None:
+        return [root.data]
+
+    left_path = longestPath(root.left)
+    right_path = longestPath(root.right)
+
+    # Choose longer path
+    if len(left_path) > len(right_path):
+        left_path.append(root.data)
+        return left_path
+    else:
+        right_path.append(root.data)
+        return right_path
+
+longestPath(btn1)
+
+[7, 5, 2, 1]
