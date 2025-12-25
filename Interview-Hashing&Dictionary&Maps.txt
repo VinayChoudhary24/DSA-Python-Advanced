@@ -1,0 +1,1026 @@
+## Hashing:: is a Technique in which we have some key and we convert it into some Integer, so that we can retain it 
+             in a Data Structure called Hash Table.
+
+
+    ## Why we need hashing::
+                   ***** For Faster Look-ups.
+
+    ## Use Cases for Hash::
+                     1. Data Integrity Check(CRC), Security Checks.
+                     2. Storing Passwords/Secrets
+                     3. SHA Algorithm  
+                     4. Encryption, Crypto Encryption 
+
+     ## Hashing has Three Components::
+                1. Key ==> it can be a string, Object, large Number etc.
+
+                2. Hash Func ==> It is responsible to convert the Key into some Integer. that can be used as a INDEX
+                                 in Hash Table.
+
+                3. Hash Table ==> It is a Data Structure/Array where we store the Hashed Values after passing 
+                                  through the Hash Func (Some Integer).
+
+
+## Hash Function:: 
+        1. when the output(Integer) for some keys are Same they are called COLLISION. 
+        2. A Good Has Function should have less number of Collisions. the more number of collision leads to 
+           worst time complexity for look-ups.
+
+
+        ##Types of Hash Func::
+                1. Division, 
+                         f(key) = key % M      
+                                          here, M is Size of Hash Table
+
+                2. Mid Square,
+                         f(key) = key^2, 
+                                      After Squaring the key value, we take the Middle Digits to Form the Hash Value.
+                                      the number of middle digits depends upon the size of the Hash Table.
+                      
+                         For Example: 
+                         f(52) = 2704,
+                                      here size of table is 100, so we can take digits more than 99 i.e 2.
+                                      now we take the Middle Digits i.e 70
+
+                3. Folding,
+                         f(key) = k(1) + k(2) + .... + k(n),
+                                      First we calculate the size of Hash Table and Accordingly we break the Key in
+                                      that Number.
+
+                         For Example: 
+                         f(423561) = 42 + 35 + 61 = 138, we ignore 1 so f(423561) = 38
+                                      here size of table is 100, so we can take digits more than 99 i.e 2.
+                                      now we break K in 2 Digits 
+
+                4. Multiplication,
+                         f(key) = M(K * A % 1)
+                                      Here, M is size of Hash Table
+                                            A is constant bewen 0 <= A <= 1.
+                                            K is Key
+                                            After Multiplication we Try to take the Fractional part of it.
+
+                         For Example: 
+                         f(211) = 100(211 * 0.23 % 1), = 53
+                                      here size of table is 100(M), 
+                                      A is 0.23 
+                                      211 * 0.23 = 48.53, so we take the fractional part of it 
+                                      now k*A % 1 = .53
+                                      later .53 * 100(M) = 53, this is the Hashed Value
+                                       
+                         
+               
+
+###Question
+Which one of the following hash functions on integers will distribute keys most uniformly over 10 buckets 
+numbered 0 to 9 for i ranging from 0 to 2020?
+
+Answer:
+
+h(i) = i3 mod 10
+
+
+
+## Problem with Hashing:: Total Number of Collisions
+                when the output of Two keys is Same for hash function, it is called Collision. 
+
+                ***How to handle them:
+                          1. Separate Chaining, We maintain a Linked List for the Hash Table and same values are chained 
+                                                together in LL.
+ 
+                          2. Open Addressing, Instead of maintaining LL we Directly Store the Hash Value in the 
+                                              Hash Table Itself. 
+                                  
+                                   There are Three ways:-
+                                         i- Linear Probing: f(K) = A, if is available in hash table store the value. if
+                                                                   A is not avaliable check for A + 1 and So on till 
+                                                                   (A+ 1), (A+ 2), ... (A+ K) % Size. 
+
+                                         ii- Quadratic probing: It Optimizes the Linear Approach. we need to create a 
+                                                                Quadratic function which optimizes it.
+
+                                                       For Example: Quadratic Func = p^2 + p + 1
+                                                             f(k) = A, now check (A + p^2 + p + 1)
+                                                                    (1^2 + 1 + 1), (2^2 + 2 + 2) .... so on. 
+
+                                         iii- Double Hashing: This is the Most Optimized Way. here we have two hash
+                                                              Functions h(k) and h2(k) and i is the Collision factor.
+
+                                                     For Example: H(k) = (h(k) + i * h2(k)) % M           
+                                                             
+                                               
+                  
+
+###Question
+Consider a hash table with 100 slots. Collisions are resolved using chaining. Assuming simple uniform hashing, 
+what is the probability that the first 3 slots are unfilled after the first 3 insertions?
+
+Answer:
+Key assumption: Simple uniform hashing means each insertion has equal probability (1/100) of going into any slot
+
+P(single insertion avoids first 3 slots) = 97/100
+Each insertion still has the same 97/100 probability
+
+(97 x 97 x 97)/1000000, P(Single Slot being Unfilled)
+97/100P(all three slots unfilled after 1 Insertion) = (97/100) * (97/100) * (97/100) = 0.9126
+
+
+
+
+###Question
+Consider a hash table of size seven, with starting index zero and a hash function (3x + 4)mod 7. Assuming the 
+hash table is initially empty, which of the following is the contents of the table when the sequence 1, 3, 8, 10 
+is inserted into the table using closed hashing? Note that ‘_’ denotes an empty location in the table.
+
+Answer: 
+1, 8, 10, _, _, _, 3
+
+Closed Hashing Means Linear Probing. 
+
+Step 1
+Insert 1:
+h(1) = (3×1 + 4) mod 7
+     = (3 + 4) mod 7
+     = 7 mod 7
+     = 0
+
+Index 0 is empty → Insert at index 0
+Table: [1, _, _, _, _, _, _]
+
+
+Step 2
+Insert 3:
+h(3) = (3×3 + 4) mod 7
+     = (9 + 4) mod 7
+     = 13 mod 7
+     = 6
+
+Index 6 is empty → Insert at index 6
+Table: [1, _, _, _, _, _, 3]
+
+Step 3
+Insert 8:
+h(8) = (3×8 + 4) mod 7
+     = (24 + 4) mod 7
+     = 28 mod 7
+     = 0
+
+Index 0 is occupied by 1 → COLLISION!
+Linear probe: Check index 1 → It's empty
+Insert at index 1
+Table: [1, 8, _, _, _, _, 3]
+
+Step 4
+Insert 10:
+h(10) = (3×10 + 4) mod 7
+      = (30 + 4) mod 7
+      = 34 mod 7
+      = 6
+
+Index 6 is occupied by 3 → COLLISION!
+Linear probe:
+
+Check index 0 (wraps around 6→0) → Occupied by 1
+Check index 1 → Occupied by 8
+Check index 2 → Empty!
+
+
+Insert at index 2
+Table: [1, 8, 10, _, _, _, 3]
+
+
+
+## LOAD FACTOR:: To Optimize the (N/M), Lesser the (N/M) is Better.
+         LF = (N/M), 
+                    N = Number of items that needs to be stored.
+                    M = Size of the Table/Array
+
+         *** How to Optimize (N/M):
+                                   i - Decrease N Value (Not in Control)
+
+                                   ii - Increase M Value (In Control)
+
+
+
+###Question
+Load Factor HashMap
+Given: n = no. of entries in Hashmap b= size of bucket array. What is the load factor when n=100 and b = 9?
+
+Answer:
+
+11.11
+
+
+
+## RE-HASHING:: If the Current L.F Increases than the Threshold L.F, we Need to Increase the Size of Table (M).
+
+                ==> when we want to increase the size of the Table(M), we take a New Hash Table of Double the size
+                    and also Map all the hashed Values in the the New Table and continue the inserting for remaining.
+
+
+
+## INTRO TO HASH MAP IN PYTHON:: Creating Hash Table 
+
+"""
+Insert:: Best and Average case Time Come: O(1) and worst case: O(n)
+Get:: Best and Average case Time Come: O(1) and worst case: O(n)
+Delete:: Best and Average case Time Come: O(1) and worst case: O(n)
+"""
+
+class HashTable:
+    def __init__(self, size):
+        self.size = size
+        self.create_hash_table()
+
+    def create_hash_table(self):
+        self.hash_table = [[] for _ in range(self.size)]
+
+    """
+    Insert key, value Pair into hash Table, if already Exits update it's value
+    """
+    def insert(self, key, value):
+        hash_val = hash(key) % self.size
+
+        bucket = self.hash_table[hash_val]
+
+        isFound = False
+        idx = -1
+        for i in range(len(bucket)):
+            stored_key, stored_value = bucket[i]
+            if stored_key == key:
+                isFound = True
+                idx = i
+                break
+
+        if isFound:
+            self.hash_table[hash_val][idx] = (key, value)
+        else:
+            self.hash_table[hash_val].append((key, value))
+
+
+    """
+    Given a key gets it's value
+    """
+    def get(self, key):
+        hash_val = hash(key) % self.size
+
+        bucket = self.hash_table[hash_val]
+
+        for i in range(len(bucket)):
+            stored_key, stored_value = bucket[i]
+            if stored_key == key:
+                return stored_value
+
+        return "key not found: " + key
+
+    """
+    Delete the key if present else print error message
+    """
+    def delete(self, key):
+        hash_val = hash(key) % self.size
+
+        bucket = self.hash_table[hash_val]
+
+        isFound = False
+        idx = -1
+        for i in range(len(bucket)):
+            stored_key, stored_value = bucket[i]
+            if stored_key == key:
+                isFound = True
+                idx = i
+                break
+
+        if isFound:
+            self.hash_table[hash_val].pop(idx)
+        else:
+            print("Key not found:", key)
+
+
+if __name__ == "__main__":
+    hash_table = HashTable(10)
+
+    hash_table.insert("Sam", 93)
+    hash_table.insert("Sam2", 83)
+    hash_table.insert("Sam3", 73)
+    hash_table.insert("Sam4", 63)
+
+    print(hash_table.get("Sam"))
+    print(hash_table.get("Sam5"))
+
+    hash_table.insert("Sam5", 53)
+
+    print(hash_table.get("Sam5"))
+
+    hash_table.delete("Sam4")
+    print(hash_table.get("Sam4"))
+    hash_table.delete("Sam6")
+
+93
+key not found: Sam5
+53
+key not found: Sam4
+Key not found: Sam6
+
+
+
+###Question
+Complexity HashMap
+Average case time complexity of hashmap operations (insertion, deletion & searching).
+
+Answer:
+
+O(1)
+
+
+
+###Question
+HashMap TC
+Time complexity for retrieving all keys from the Hashmap.
+
+Answer:
+
+O(n), to retrieve all keys we need to iterate on all and if n number of keys are present the TC will be O(n).
+
+
+
+## HashMap/Hash Table:: we dont have to implement hashMap ourself becaue python provides us in the 
+                        form of Dictionary Data Type. 
+
+                 
+              
+
+## Different ways to Create Dictionary:
+"""
+Add:: Best and Average case Time Come: O(1) and worst case: O(n)
+Update:: Best and Average case Time Come: O(1) and worst case: O(n)
+Delete:: Best and Average case Time Come: O(1) and worst case: O(n)
+Get:: Best and Average case Time Come: O(1) and worst case: O(n)
+"""
+# ways to create and initialize dictionary
+# using dict and {}
+temp_dict = dict({
+    "Sam": 92,
+    "Sam2": 82,
+    "Sam3": 72,
+})
+
+# print(temp_dict)
+# using dict and []
+temp_dict2 = dict([
+    ("Sam", 92),
+    ("Sam2", 82),
+    ("Sam3", 72)
+])
+
+# print(temp_dict2)
+# using {}
+temp_dict3 = {
+    "Sam": 92,
+    "Sam2": 82,
+    "Sam3": 72,
+}
+
+# print(temp_dict3)
+
+# print(type(temp_dict), type(temp_dict2), type(temp_dict3))
+
+# only with keys and default values
+keys = ["Sam", "Sam2", "Sam3"]
+temp_dict4 = dict.fromkeys(keys, 0)
+
+# print(temp_dict4)
+
+# create a New Copy of dict just like spread operator in JS
+temp_dict5 = temp_dict.copy()
+
+temp_dict5["Sam4"] = 62
+temp_dict5["Sam3"] = 52
+
+# print(temp_dict)
+# print(temp_dict5)
+
+# print(len(temp_dict5))
+
+
+
+## Access Dictionary Elements:
+
+# Access the Dictionary Elements
+temp_dict = {
+    "Sam": 92,
+    "Sam2": 82,
+    "Sam3": 72,
+}
+
+print(temp_dict["Sam"])
+
+print(temp_dict.get("Sam"))
+
+print(temp_dict.get("Sam11", 0)) # get is Better Approach to access becaue if key is not available we assign default value 0
+
+print(temp_dict["Sam11"]) # This Approachh will lead to Error if key is not present
+
+92
+92
+None
+KEYERROR..............
+
+
+# Getting the List of Keys in Dictionary
+keys = temp_dict.keys()
+
+for key in keys:
+    print("Student Name: ", key)
+
+Student Name:  Sam
+Student Name:  Sam2
+Student Name:  Sam3
+
+
+# Getting only the Values
+values = temp_dict.values()
+
+for value in values:
+    print("Student marks: ", value)
+
+Student marks:  920
+Student marks:  820
+Student marks:  720
+
+
+# getting all the key value Pairs
+items = temp_dict.items()
+
+# Firsst Approach
+for key, value in items:
+    print("Student Name:", key + ", " + "Marks:", value)
+
+Student Name: Sam, Marks: 920
+Student Name: Sam2, Marks: 820
+Student Name: Sam3, Marks: 720
+
+# Second Approach
+for key in temp_dict:
+    print("Marks of ", key + " is:", str(temp_dict.get(key)))
+
+Marks of  Sam is: 920
+Marks of  Sam2 is: 820
+Marks of  Sam3 is: 720
+
+
+# Add/Update Dictionary 
+temp_dict = {
+    "Sam": 920,
+    "Sam2": 820,
+    "Sam3": 720,
+}
+
+# Adding key/Value pairs Using update func
+temp_dict.update([
+    ("Sam4", 888),
+    ("Sam5", 555)
+])
+
+print(temp_dict)
+
+{'Sam': 920, 'Sam2': 820, 'Sam3': 720, 'Sam4': 888, 'Sam5': 555}
+
+
+# Updating value for a key Using update func
+temp_dict.update([
+    ("Sam1", 111),
+    ("Sam", 111),
+    ("Sam2", 222)
+])
+
+print(temp_dict)
+
+{'Sam': 111, 'Sam2': 222, 'Sam3': 720, 'Sam4': 888, 'Sam5': 555, 'Sam1': 111}
+
+
+# delete a key-value
+removed_val = temp_dict.pop("Sam1")
+
+print(temp_dict)
+print(removed_val)
+
+{'Sam': 111, 'Sam2': 222, 'Sam3': 720, 'Sam4': 888, 'Sam5': 555, 'Sam11': 1010}
+999
+
+# delete using del func
+del(temp_dict["Sam11"])
+
+print(temp_dict)
+
+{'Sam': 111, 'Sam2': 222, 'Sam3': 720, 'Sam4': 888, 'Sam5': 555}
+
+
+# Clear the Dictionary
+temp_dict.clear()
+
+print(temp_dict)
+
+{}
+
+
+
+
+###Question
+print all words with Frequency K
+
+Answer:
+
+def print_word_with_freq_k(words, k):
+    freq = dict()
+
+    for word in words:
+        # we use get to access safely
+        if not freq.get(word, None):
+            freq[word] = 1
+        else:
+            # now we word alread present
+            freq[word] += 1
+
+    ans = []
+    for word in words:
+        if freq.get(word, 0) >= k:
+            ans.append(word)
+
+    return ans
+
+res_k = print_word_with_freq_k(["cat", "dog", "dog", "cat", "donk", "cat", "dog"], 3)
+print(res_k)
+
+['cat', 'dog', 'dog', 'cat', 'cat', 'dog']
+
+
+
+###Question
+Maximum Frequency Number
+
+You are given an array of integers that contain numbers in random order. Write a program to find and return the 
+number which occurs the maximum times in the given input.
+
+If two or more elements are having the maximum frequency, return the element which occurs in the array first.
+
+Answer:
+
+def maxfreq(arr):
+    freq = {}
+
+    for num in arr:
+        freq[num] = freq.get(num, 0) + 1
+
+    max_count = 0
+    res = None
+
+    for num in arr:
+        if freq[num] > max_count:
+            max_count = freq[num]
+            res = num
+
+    return res
+
+res_num = maxfreq([1, 2, 1, 3, 1, 4, 5, 1, 3, 2, 2, 2, 1, 4, 4, 2, 1])
+print(res_num)
+
+1
+
+
+
+###Question 
+calculate pair sum equal to given target 
+
+Answer:
+
+def pair_sum(arr, target):
+    freq = dict()
+    ans = 0
+
+    for num in arr:
+        expect = target - num
+        ans += freq.get(expect, 0)
+
+        if freq.get(num, 0):
+            freq[num] += 1
+        else:
+            freq[num] = 1
+
+    return ans
+
+res_pair = pair_sum([2, 3, 8, 1, 4, 2, 7, 3, 1, 2, 4, 9, 1], 4)
+print(res_pair)
+
+9
+
+
+
+###Question
+Pairs with Difference k
+
+You are given with an array of integers and an integer K. You have to find and print the count of all such pairs 
+which have difference K.
+
+Note: Take absolute difference between the elements of the array.
+
+Answer:
+
+def printPairDiffK(l, k):
+    # Step 1: Build frequency dictionary
+    # freq[num] = how many times 'num' appears in the list
+    freq = dict()
+    count = 0
+
+    # Count frequency of each number in the list
+    for num in l:
+        # freq.get(num, 0) returns current frequency or 0 if not present
+        # Then increment by 1
+        freq[num] = freq.get(num, 0) + 1
+
+    # Step 2: Handle special case when k == 0
+    # When k = 0, we need pairs of identical numbers
+    # Example: [1, 1, 1] with k=0 → pairs are (1,1), (1,1), (1,1) = 3 pairs
+    if k == 0:
+        # For each unique number in the frequency map
+        for num in freq:
+            # Get how many times this number appears
+            n = freq[num]
+            # Calculate combinations: C(n, 2) = n * (n-1) / 2
+            # This counts how many pairs can be formed from n identical numbers
+            # Example: If 1 appears 3 times, pairs = 3*2/2 = 3
+            # (choosing 2 items from 3: (0,1), (0,2), (1,2))
+            count += n * (n - 1) // 2
+        # Return early since k=0 case is handled
+        return count
+
+    # Step 3: Handle general case when k > 0
+    # For each unique number in our frequency map
+    for num in freq:
+        # Check if (num + k) exists in the frequency map
+        # If it exists, then (num, num+k) forms a valid pair with difference k
+        # 
+        # Why only check num + k and not num - k?
+        # Because when we process num, we already handled (num-k, num) pair earlier
+        # This avoids counting the same pair twice
+        #
+        # Example: l = [1, 3, 5], k = 2
+        # - When num = 1: Check if 3 exists → Yes! Count pairs: 1 * 1 = 1 pair (1,3)
+        # - When num = 3: Check if 5 exists → Yes! Count pairs: 1 * 1 = 1 pair (3,5)
+        # - When num = 5: Check if 7 exists → No
+        # Total: 2 pairs
+        
+        # Multiply frequencies to count ALL possible pairs
+        # If num appears 'a' times and (num+k) appears 'b' times,
+        # we can form a * b pairs between them
+        # freq.get(num + k, 0) returns frequency of (num+k) or 0 if not present
+        count += freq[num] * freq.get(num + k, 0)
+    
+    return count
+
+l = [1, 5, 3, 4, 2]
+k = 2
+print(printPairDiffK(l, k))
+
+3
+
+
+
+## Group Anagrams::
+         ==> when two words have the same frequeny of characters. 
+             1. tea and eat, ate are Anagrams. 
+             2. not and ton
+
+
+###Question
+Group words that are Anagrams
+
+Answer:
+
+class Solution:
+    def calculate_hash_str(self, freq):
+        str_freq = [str(num) for num in freq]
+        return "$".join(str_freq)
+
+    def calculate_fre_arr(self, word: str):
+        freq = [0 for _ in range(26)]
+        for i in range(len(word)):
+            freq[ord(word[i]) - ord('a')] += 1
+        return freq
+
+    def groupAnagrams(self, strs):
+        ans = []
+        hashtable = dict()
+
+        for word in strs:
+            freq_arr = self.calculate_fre_arr(word)
+            hash_str = self.calculate_hash_str(freq_arr)
+            if hashtable.get(hash_str, None):
+                hashtable[hash_str].append(word)
+            else:
+                hashtable[hash_str] = [word]
+
+        for value in hashtable.values():
+            ans.append(value)
+
+        return ans
+
+sol = Solution()
+print(sol.groupAnagrams(["eat", "tea", "ate", "not", "ton", "bat"]))
+
+[['eat', 'tea', 'ate'], ['not', 'ton'], ['bat']]
+
+
+
+###Qusetion
+Longest Consecutive Sequence
+
+You are given an unsorted array/list 'ARR' of 'N' integers. Your task is to return the length of the longest 
+consecutive sequence.
+
+The consecutive sequence is in the form ['NUM', 'NUM' + 1, 'NUM' + 2, ..., 'NUM' + L] where 'NUM' is the 
+starting integer of the sequence and 'L' + 1 is the length of the sequence.
+
+Note:
+
+If there are any duplicates in the given array we will count only one of them in the consecutive sequence.
+
+Answer:
+
+def lengthOfLongestConsecutiveSequence(arr, n):
+    # Base case: empty array has no sequences
+    if n == 0:
+        return 0
+
+    # Step 1: Convert array to set
+    # Purpose:
+    # - O(1) lookup time for checking if a number exists
+    # - Automatically removes duplicates
+    # - Allows us to check consecutive numbers efficiently
+    num_set = set(arr)
+    # Variable to track the maximum sequence length found
+    longest = 0
+
+    # Step 2: Iterate through each unique number in the set
+    for num in num_set:
+        # KEY OPTIMIZATION: Check if 'num' is the START of a sequence
+        # A number is the start if (num - 1) does NOT exist in the set
+        # 
+        # Why this optimization?
+        # Without it, we'd check sequences starting from every number:
+        # Example: For sequence [1,2,3,4]
+        #   - Starting from 1: check 1,2,3,4 (4 checks)
+        #   - Starting from 2: check 2,3,4 (3 checks)
+        #   - Starting from 3: check 3,4 (2 checks)
+        #   - Starting from 4: check 4 (1 check)
+        #   Total: 10 checks (quadratic behavior)
+        #
+        # With optimization: Only start from 1 → Total: 4 checks (linear!)
+        if num - 1 not in num_set:
+            # This number is the beginning of a potential sequence
+            # Initialize current number and sequence length
+            current = num
+            length = 1
+
+            # Step 3: Count consecutive numbers starting from this point
+            # Keep incrementing while the next consecutive number exists
+            while current + 1 in num_set:
+                current += 1 # Move to next consecutive number
+                length += 1 # Increment sequence length
+
+            # Step 4: Update the longest sequence found so far
+            longest = max(longest, length)
+
+    # Return the length of the longest consecutive sequence
+    return longest
+
+arr = [100, 4, 200, 1, 3, 2, 2]
+print(lengthOfLongestConsecutiveSequence(arr, len(arr)))
+
+4
+
+
+
+###Question
+Extract Unique Charaters
+
+Given a string S, you need to remove all the duplicates. That means, the output string should contain each 
+character only once. The respective order of characters should remain same, as in the input string.
+
+Answer:
+
+def uniqueChar(s):
+    # Base case: if string is empty, return ""
+    if len(s) == 0:
+        return ""
+    # Data structure 1: Set to track characters we've already encountered
+    # Why use a set?
+    # - O(1) average time complexity for lookup (checking if char exists)
+    # - Much faster than checking in a list which would be O(n)
+    seen = set()
+    # Data structure 2: List to build the result string
+    # Why use a list instead of string concatenation?
+    # - String concatenation in Python creates a new string each time (O(n))
+    # - List appending is O(1) amortized
+    # - Join at the end is O(n) once, rather than O(n²) for repeated concatenation
+    result = []
+
+    # Iterate through each character in the input string
+    for ch in s:
+        # Check if we've seen this character before
+        # This is O(1) lookup time because 'seen' is a set
+        if ch not in seen:
+            # Character is new (first occurrence)
+            # Add to 'seen' set so we know we've encountered it
+            seen.add(ch)
+            # Add to result list to include it in final output
+            # We maintain the order of first occurrence
+            result.append(ch)
+        # If ch is already in 'seen', we skip it (implicit else - do nothing)
+        # This eliminates duplicates
+
+    # Convert list of characters back to a string
+    # "".join(list) is efficient - O(n) operation
+    return "".join(result)
+
+print(uniqueChar("ababacd"))
+
+abcd
+
+
+
+###Question
+Longest subArray zero sum
+
+Given an array consisting of positive and negative integers, find the length of the longest subarray 
+whose sum is zero.
+
+Answer:
+
+def subsetSum(l):
+    # Base Case
+    if len(l) == 0:
+        return
+
+    # Variable to track cumulative sum from start to current index
+    prefix_sum = 0
+    # Variable to store the maximum length found so far
+    max_len = 0
+    # Dictionary to store: {prefix_sum: first_index_where_it_occurred}
+    # We store the FIRST occurrence to maximize subarray length
+    sum_index = {}
+
+     # Iterate through each element with its index
+    for i in range(len(l)):
+        # Update prefix sum by adding current element
+        prefix_sum += l[i]
+
+        # CASE 1: If prefix sum is zero from the start
+        # This means all elements from index 0 to i sum to 0
+        # Example: [1, -1] → at i=1, prefix_sum = 0, so length = 2
+        if prefix_sum == 0:
+            max_len = i + 1 # Length from start to current index (i+1 elements)
+
+        # CASE 2: If we've seen this prefix sum before
+        # This means the subarray between the first occurrence and now has sum 0
+        # 
+        # Example: 
+        # Index:      0   1   2   3   4   5
+        # Array:     [1, -1,  3,  2, -2, -3]
+        # Prefix:    [1,  0,  3,  5,  3,  0]
+        #                           ↑       ↑
+        #                   Same prefix sum (3) at indices 2 and 4
+        #                   → Subarray [2, -2] from index 3 to 4 has sum 0
+        if prefix_sum in sum_index:
+            # Calculate length of subarray with sum 0
+            # Current index - first occurrence index = length of zero-sum subarray
+            # We don't include the element at sum_index[prefix_sum] because
+            # the zero sum is AFTER that position
+            max_len = max(max_len, i - sum_index[prefix_sum])
+        else:
+            # CASE 3: First time seeing this prefix sum
+            # Store it with current index for future reference
+            # We store the FIRST occurrence to get maximum length later
+            sum_index[prefix_sum] = i
+
+    # Return the length of the longest subarray with sum 0
+    return max_len
+
+arr = [1, -1, 3, 2, -2, -3, 3]
+print(subsetSum(arr))
+
+6
+
+
+
+###Question
+Print Intersection
+
+You have been given two integer arrays/lists (ARR1 and ARR2) of size N and M, respectively. You need to print 
+their intersection; An intersection for this problem can be defined when both the arrays/lists contain a particular 
+value or to put it in other words, when there is a common value that exists in both the arrays/lists.
+
+Note :
+Input arrays/lists can contain duplicate elements.
+
+The intersection elements printed would be in the order they appear in the second array/list (ARR2).
+
+Answer:
+
+def printIntersection(arr1, n1, arr2, n2):
+    # Base case: if either array is empty, no intersection exists
+    if n1 == 0 or n2 == 0:
+        return
+    # Dictionary to store frequency of each element in arr1
+    # Key: element value, Value: count of occurrences
+    # This allows O(1) lookup to check if element exists
+    freq = {}
+
+    # STEP 1: Build frequency map of arr1
+    # Count how many times each element appears in arr1
+    for num in arr1:
+        # freq.get(num, 0) returns current count or 0 if num not in freq
+        # Increment the count by 1
+        freq[num] = freq.get(num, 0) + 1
+
+    # After this loop, freq might look like: {2:1, 6:1, 8:1, 5:1, 4:1, 3:1}
+    # For arr1 = [2, 6, 8, 5, 4, 3]
+    
+    # STEP 2: Print intersection in arr2's order
+    # Iterate through arr2 and check if each element exists in freq map
+    for num in arr2:
+        # Check if this element exists in arr1 (freq > 0)
+        # freq.get(num, 0) returns the count, or 0 if num not in freq
+        if freq.get(num, 0) > 0:
+            # Element is common to both arrays
+            # Print the common element
+            print(num)
+            # CRITICAL: Decrement the frequency count
+            # Why decrement?
+            # - Handles duplicates correctly
+            # - If arr1 has [2,2] and arr2 has [2,2,2], only print 2 twice
+            # - Each time we print, we "consume" one occurrence from arr1
+            # - When count reaches 0, we won't print it again
+            freq[num] -= 1
+
+arr1 = [2, 6, 8, 5, 4, 3]
+arr2 = [2, 3, 4, 7]
+
+printIntersection(arr1, len(arr1), arr2, len(arr2))
+
+2
+3
+4
+
+
+
+###Question
+Pair sum to 0
+
+Given a random integer array A of size N. Find and print the count of pair of elements in the array which sum up to 0.
+
+Note:
+Array A can contain duplicate elements as well.
+
+Answer:
+
+def pairSum0(l, n):
+    # Base case: empty list has no pairs
+    if n == 0:
+        return
+    # Dictionary to store frequency of each number we've seen so far
+    # Key: number value, Value: how many times we've seen it
+    # This allows O(1) lookup to check if complement exists
+    freq = {}
+    # Counter for total number of valid pairs
+    count = 0
+
+    # Iterate through each number in the list
+    for num in l:
+        # KEY STEP: Check if the complement (negative) of current number exists
+        # If num + (-num) = 0, so we look for -num in our frequency map
+        # 
+        # Why check BEFORE adding current number to freq?
+        # - We want pairs where i < j (avoid counting same pair twice)
+        # - By checking first, we only count pairs with earlier elements
+        # - This ensures each pair is counted exactly once
+        if -num in freq:
+            # Complement exists! This means we found matching pair(s)
+            # Add the frequency count of the complement
+            # 
+            # Why add freq[-num] instead of just 1?
+            # - If -num appeared multiple times, current num forms a pair with EACH occurrence
+            # - Example: If we've seen -2 three times, and now see 2, that's 3 pairs!
+            count += freq[-num]
+
+        # Update frequency of current number for future iterations
+        # freq.get(num, 0) returns current count or 0 if num not seen yet
+        # Increment by 1 to record this occurrence
+        freq[num] = freq.get(num, 0) + 1
+
+    return count
+
+l = [2, -2, 3, 0, -3, 0]
+print(pairSum0(l, len(l)))
+
+3
+
+ 
